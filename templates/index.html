@@ -1,0 +1,334 @@
+  <!doctype html>
+<html lang="es">
+  <head>
+    <!--
+      Interfaz de chat (widget)
+      - Botón lanzador flotante (esquina inferior derecha)
+      - Burbujas de conversación, selector de idioma, sugerencias con miniaturas y tarjeta de bebida
+      - Se abre automáticamente si la URL incluye ?autopen=1
+    -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Starbucks | Buscador de bebidas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --accent: #006241; /* Starbucks green */
+        --fg: #fff;        /* White */
+        --bg1: #e8f3ee;
+        --bg2: #f6fbf9;
+        --text: #142021;
+        --muted: #6b7a7a;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: linear-gradient(180deg, var(--bg1), var(--bg2));
+        color: var(--text);
+      }
+      .widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 360px;
+        max-width: 94vw;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.06);
+        transform: translateY(16px) scale(0.98);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform .2s ease, opacity .2s ease;
+        z-index: 1000;
+      }
+      .widget.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+      .launcher {
+        position: fixed;
+        bottom: 20px; right: 20px;
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        display: grid; place-items: center;
+        background: var(--accent); color: var(--fg);
+        box-shadow: 0 10px 25px rgba(0,0,0,.2);
+        cursor: pointer;
+        z-index: 999;
+        border: none;
+      }
+      .launcher.hidden { display: none; }
+      .widget-header {
+        background: var(--accent);
+        color: var(--fg);
+        padding: 12px 16px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .widget-title { font-weight: 700; letter-spacing: .5px; }
+      .icon-btn { width: 28px; height: 28px; border-radius: 50%; display:grid; place-items:center; cursor:pointer; border:1px solid rgba(255,255,255,.6); color:#fff; }
+      .chat-area { padding: 12px 12px 0 12px; height: 56vh; max-height: 56vh; overflow: auto; background: linear-gradient(180deg, #f7faf9, #eef6f2); }
+      .composer { padding: 12px; background: #fff; border-top: 1px solid #e6ece9; }
+      .pill { display:inline-block; background: #f0f5f3; border:1px solid #d6e4de; padding:6px 10px; border-radius: 999px; margin:6px 6px 0 0; font-size:12px; cursor:pointer; }
+      .muted { color: var(--muted); }
+      .bubble { border-radius: 16px; padding: 10px 12px; max-width: 82%; }
+      .bubble-user { background: var(--accent); color: var(--fg); align-self: flex-end; border-top-right-radius: 6px; }
+      .bubble-bot { background: #ffffff; color: var(--text); align-self: flex-start; border: 1px solid #e8efea; border-top-left-radius: 6px; }
+      /* Chips con miniatura para sugerencias */
+      .chip { display: inline-flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #e1ebe6; border-radius: 999px; padding: 6px 10px; margin: 6px 6px 0 0; cursor: pointer; box-shadow: 0 1px 0 rgba(0,0,0,0.02); }
+      .chip:hover { background: #f7fbf9; }
+      .chip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1px solid #e6ece9; }
+      .chip .name { font-size: 12px; color: #17221f; }
+      .chip .price { font-size: 12px; color: var(--muted); margin-left: 4px; }
+      /* Tarjeta de bebida con imagen */
+      .drink-card { display: grid; grid-template-columns: 72px 1fr; gap: 12px; background: #ffffff; border: 1px solid #e6ece9; border-radius: 12px; padding: 10px; margin-top: 6px; }
+      .drink-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #e6ece9; }
+      .drink-card .title { font-weight: 700; margin-bottom: 2px; }
+      .drink-card .meta { font-size: 12px; color: var(--muted); }
+    </style>
+  </head>
+  <body>
+    <button id="launcher" class="launcher" title="Abrir chat">💬</button>
+
+    <div id="widget" class="widget">
+      <div class="widget-header">
+        <div class="d-flex align-items-center gap-2">
+          <div id="btn-close" class="icon-btn" title="Cerrar">×</div>
+          <div id="btn-min" class="icon-btn" title="Minimizar">–</div>
+        </div>
+        <div class="widget-title">CHATBOT</div>
+        <div style="width: 56px;"></div>
+      </div>
+      <div id="chat" class="chat-area d-flex flex-column gap-2"></div>
+      <div class="composer">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-0 pe-0">➕</span>
+          <input id="q" type="text" class="form-control border-0" placeholder="Escribe tu bebida o pide una recomendación" />
+          <button id="btn" class="btn btn-success" style="background-color: var(--accent); border-color: var(--accent);">▶</button>
+        </div>
+        <div class="hint muted mt-1">Puedes escribir en español o inglés.</div>
+      </div>
+    </div>
+
+    <script>
+      const $q = document.getElementById('q');
+      const $btn = document.getElementById('btn');
+      const $widget = document.getElementById('widget');
+      const $launcher = document.getElementById('launcher');
+      const $btnClose = document.getElementById('btn-close');
+      const $btnMin = document.getElementById('btn-min');
+      const $chat = document.getElementById('chat');
+
+      function setBusy(b) { $btn.disabled = b; $btn.textContent = b ? 'Enviando…' : 'Enviar'; }
+
+      function scrollDown() { $chat.scrollTop = $chat.scrollHeight; }
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c] || c));
+      }
+
+      function msgUser(text) {
+        const wrap = document.createElement('div');
+        wrap.className = 'bubble bubble-user align-self-end';
+        wrap.textContent = text;
+        $chat.appendChild(wrap);
+        scrollDown();
+      }
+
+      function msgAssistant(html) {
+        const wrap = document.createElement('div');
+        wrap.className = 'bubble bubble-bot align-self-start';
+        wrap.innerHTML = html;
+        // Si el backend devuelve un JSON con imagen, podemos anexarla cuando el texto no la incluya
+        $chat.appendChild(wrap);
+        scrollDown();
+      }
+
+      function pills(items, title) {
+        if (!items || !items.length) return null;
+        const box = document.createElement('div');
+        if (title) {
+          const h = document.createElement('div');
+          h.className = 'muted';
+          h.textContent = title;
+          h.style.marginBottom = '6px';
+          box.appendChild(h);
+        }
+        items.forEach(s => {
+          const chip = document.createElement('div');
+          chip.className = 'chip';
+          if (s.image_url) {
+            const img = document.createElement('img');
+            img.src = s.image_url;
+            img.alt = s.name_es;
+            chip.appendChild(img);
+          }
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = s.name_es;
+          chip.appendChild(name);
+          if (s.price != null) {
+            const price = document.createElement('span');
+            price.className = 'price';
+            price.textContent = `$${Number(s.price).toFixed(2)}`;
+            chip.appendChild(price);
+          }
+          chip.onclick = () => { $q.value = s.name_es; submitQuery(); };
+          box.appendChild(chip);
+        });
+        return box;
+      }
+
+      function drinkCard(d, lang) {
+        console.log('Creating drink card for:', d.name_es, 'Image URL:', d.image_url);
+        const wrap = document.createElement('div');
+        wrap.className = 'drink-card';
+        if (d.image_url) {
+          console.log('Adding image:', d.image_url);
+          const img = document.createElement('img');
+          img.src = d.image_url; 
+          img.alt = d.name_es; 
+          img.style.width = '72px';
+          img.style.height = '72px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '8px';
+          img.style.border = '1px solid #e6ece9';
+          img.onload = () => console.log('Image loaded successfully:', d.image_url);
+          img.onerror = () => console.log('Image failed to load:', d.image_url);
+          wrap.appendChild(img);
+        } else {
+          console.log('No image URL, using placeholder');
+          const ph = document.createElement('div');
+          ph.style.width = '72px'; ph.style.height = '72px'; ph.style.borderRadius = '8px'; ph.style.background = '#f1f6f4'; ph.style.border = '1px solid #e6ece9';
+          wrap.appendChild(ph);
+        }
+        const body = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = d.name_es;
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const cal = (d.calories != null) ? `${Number(d.calories)}` : 'N/D';
+        const fat = (d.total_fat != null) ? `${Number(d.total_fat)}` : 'N/D';
+        const price = (d.price != null) ? `$${Number(d.price).toFixed(2)}` : 'N/D';
+        meta.textContent = `Tiempo: ${d.method} · Calorías: ${cal} kcal · Grasa: ${fat} g · Precio: ${price}`;
+        body.appendChild(title);
+        body.appendChild(meta);
+        
+        // Agregar descripción si existe
+        if (d.description) {
+          const desc = document.createElement('div');
+          desc.className = 'meta';
+          desc.style.fontSize = '11px';
+          desc.style.marginTop = '4px';
+          desc.style.color = '#6b7a7a';
+          desc.textContent = d.description;
+          body.appendChild(desc);
+        }
+        
+        wrap.appendChild(body);
+        return wrap;
+      }
+
+      async function submitQuery() {
+        const query = $q.value.trim();
+        if (!query) return;
+        msgUser(query);
+        setBusy(true);
+        try {
+          const res = await fetch('/api/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query, lang: "es" })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'request_failed');
+          msgAssistant(data.text);
+          if (data.found && data.data) {
+            const card = drinkCard(data.data, "es");
+            $chat.appendChild(card);
+            scrollDown();
+          }
+          if (!data.found && data.suggestions && data.suggestions.length) {
+            const box = pills(data.suggestions, 'Quizá te interesen:');
+            if (box) $chat.appendChild(box);
+            scrollDown();
+          }
+        } catch (e) {
+          msgAssistant('Ocurrió un error realizando la búsqueda.');
+        } finally {
+          setBusy(false);
+          $q.value = '';
+        }
+      }
+
+      async function intro() {
+        // Mensaje inicial de asistente
+        msgAssistant('¡Hola! ¿Qué te gustaría tomar hoy? Si quieres, puedo recomendarte algo.');
+        // Quick actions: Recomiéndame / Ver populares
+        const actions = document.createElement('div');
+        const a1 = document.createElement('span');
+        a1.className = 'pill'; a1.textContent = 'Recomiéndame';
+        a1.onclick = recommend;
+        const a2 = document.createElement('span');
+        a2.className = 'pill'; a2.textContent = 'Ver populares';
+        a2.onclick = showPopular;
+        actions.appendChild(a1); actions.appendChild(a2);
+        $chat.appendChild(actions);
+        scrollDown();
+      }
+
+      async function recommend() {
+        try {
+          const res = await fetch('/api/suggestions?lang=es');
+          const data = await res.json();
+          if (!data.ok || !data.items || !data.items.length) return;
+          const top = data.items[0];
+          msgAssistant(`Te recomiendo probar: <strong>${top.name_en}</strong>. ¿Quieres verlo?`);
+          const box = pills(data.items.slice(0, 6), 'Otras opciones:');
+          if (box) $chat.appendChild(box);
+          scrollDown();
+        } catch (e) {}
+      }
+
+      async function showPopular() {
+        try {
+          const res = await fetch('/api/suggestions?lang=es');
+          const data = await res.json();
+          if (!data.ok) return;
+          const box = pills(data.items, 'Populares:');
+          if (box) $chat.appendChild(box);
+          scrollDown();
+        } catch (e) {}
+      }
+
+      function openWidget() {
+        $widget.classList.add('open');
+        $launcher.classList.add('hidden');
+        if (!window.__introShown) { intro(); window.__introShown = true; }
+        $q.focus();
+      }
+      function closeWidget() {
+        $widget.classList.remove('open');
+        $launcher.classList.remove('hidden');
+      }
+
+      $launcher.addEventListener('click', openWidget);
+      $btnClose.addEventListener('click', closeWidget);
+      $btnMin.addEventListener('click', closeWidget);
+      $btn.addEventListener('click', submitQuery);
+      $q.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitQuery(); });
+      // Abrir automáticamente si viene con ?autopen=1 desde el iframe de la home
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('autopen') === '1') {
+          openWidget();
+        }
+      } catch {}
+    </script>
+  </body>
+  </html>
+
