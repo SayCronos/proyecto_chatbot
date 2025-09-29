@@ -1,5 +1,5 @@
 """
-Data models for the Starbucks beverages application.
+Modelos de datos para la aplicación de bebidas Starbucks.
 """
 from dataclasses import dataclass
 from typing import Optional
@@ -7,37 +7,37 @@ from pydantic import BaseModel
 
 
 @dataclass
-class Beverage:
-    """Data model for a beverage."""
-    name_en: str
-    name_es: str
-    method: str
-    calories: Optional[float]
-    total_fat: Optional[float]
-    category: Optional[str] = None
-    price: Optional[float] = None
-    image_url: Optional[str] = None
-    description: Optional[str] = None
+class Bebida:
+    """Modelo de datos para una bebida."""
+    nombre_en: str
+    nombre_es: str
+    metodo: str
+    calorias: Optional[float]
+    grasa_total: Optional[float]
+    categoria: Optional[str] = None
+    precio: Optional[float] = None
+    url_imagen: Optional[str] = None
+    descripcion: Optional[str] = None
 
 
-class SearchRequest(BaseModel):
-    """Request model for beverage search."""
-    query: str
-    lang: str = "es"
+class SolicitudBusqueda(BaseModel):
+    """Modelo de solicitud para búsqueda de bebidas."""
+    consulta: str
+    idioma: str = "es"
 
 
-class SearchResponse(BaseModel):
-    """Response model for beverage search."""
+class RespuestaBusqueda(BaseModel):
+    """Modelo de respuesta para búsqueda de bebidas."""
     ok: bool = True
-    found: bool
-    lang: str = "es"
-    data: Optional[Beverage] = None
-    text: str
-    suggestions: list[Beverage] = []
+    encontrado: bool
+    idioma: str = "es"
+    datos: Optional[Bebida] = None
+    texto: str
+    sugerencias: list[Bebida] = []
 
 
-class SuggestionsResponse(BaseModel):
-    """Response model for beverage suggestions."""
+class RespuestaSugerencias(BaseModel):
+    """Modelo de respuesta para sugerencias de bebidas."""
     ok: bool = True
-    lang: str = "es"
-    items: list[Beverage]
+    idioma: str = "es"
+    elementos: list[Bebida]

@@ -3,86 +3,88 @@ Rutas API para el asistente de bebidas Starbucks.
 """
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
-from pydantic import BaseModel
+from functools import lru_cache
+from pathlib import Path
 
-from app.models.beverage import Beverage
-from app.core.dependencies import get_beverage_service
-from app.services.beverage_service import BeverageService
-
-
-# Modelos de request/response
-class SearchRequest(BaseModel):
-    query: str
-    lang: str = "es"
+from app.models.beverage import Bebida, SolicitudBusqueda, RespuestaBusqueda, RespuestaSugerencias
+from app.services.servicio_bebidas import ServicioBebidas
+from app.core.config import configuracion
 
 
-class SearchResponse(BaseModel):
-    ok: bool = True
-    found: bool
-    lang: str = "es"
-    data: Optional[Beverage] = None
-    text: str
-    suggestions: List[Beverage] = []
+router = APIRouter(prefix="/api", tags=["api"])
 
 
-class SuggestionsResponse(BaseModel):
-    ok: bool = True
-    lang: str = "es"
-    items: List[Beverage]
+@lru_cache()
+def obtener_servicio_bebidas() -> ServicioBebidas:
+    """Obtiene instancia del servicio de bebidas con caché."""
+    ruta_csv = Path(configuracion.ruta_archivo_csv)
+    return ServicioBebidas(ruta_csv)
 
 
-api_router = APIRouter(prefix="/api", tags=["beverages"])
-
-
-@api_router.post("/search", response_model=SearchResponse)
-async def search_beverages(
-    request: SearchRequest,
-    service: BeverageService = Depends(get_beverage_service)
-) -> SearchResponse:
-    """Busca bebidas basándose en la consulta."""
+@router.post("/buscar", response_model=RespuestaBusqueda)
+async def buscar_bebida(
+    solicitud: SolicitudBusqueda,
+    servicio: ServicioBebidas = Depends(obtener_servicio_bebidas)
+):
+    """Busca una bebida por nombre."""
     try:
-        # Buscar bebida
-        beverage = service.search_beverage(request.query)
+        resultado = servicio.buscar_bebida(solicitud.consulta)
         
-        if beverage:
-            # Formatear respuesta encontrada
-            text_response = service.format_found_response(beverage, request.lang)
-            return SearchResponse(
-                found=True,
-                lang=request.lang,
-                data=beverage,
-                text=text_response,
-                suggestions=[]
+        if resultado:
+            return RespuestaBusqueda(
+                encontrado=True,
+                datos=resultado,
+                texto=servicio.formatear_respuesta_encontrada(resultado),
+                sugerencias=[]
             )
         else:
-            # Obtener sugerencias y formatear respuesta no encontrada
-            suggestions = service.get_suggestions(request.query, max_suggestions=5)
-            text_response = service.format_not_found_response(request.query, suggestions, request.lang)
-            return SearchResponse(
-                found=False,
-                lang=request.lang,
-                data=None,
-                text=text_response,
-                suggestions=suggestions
+            sugerencias = servicio.obtener_sugerencias(solicitud.consulta)
+            return RespuestaBusqueda(
+                encontrado=False,
+                datos=None,
+                texto=servicio.formatear_respuesta_no_encontrada(solicitud.consulta, sugerencias),
+                sugerencias=sugerencias
             )
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error searching beverages: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error en la búsqueda: {str(e)}")
 
 
-@api_router.get("/suggestions", response_model=SuggestionsResponse)
-async def get_suggestions(
-    query: Optional[str] = None,
-    lang: str = "es",
-    max_suggestions: int = 10,
-    service: BeverageService = Depends(get_beverage_service)
-) -> SuggestionsResponse:
-    """Obtiene sugerencias de bebidas."""
+@router.get("/sugerencias", response_model=RespuestaSugerencias)
+async def obtener_sugerencias_bebidas(
+    consulta: str,
+    limite: int = 5,
+    servicio: ServicioBebidas = Depends(obtener_servicio_bebidas)
+):
+    """Obtiene sugerencias de bebidas basadas en una consulta."""
     try:
-        suggestions = service.get_suggestions(query or "", max_suggestions)
-        return SuggestionsResponse(
-            lang=lang,
-            items=suggestions
-        )
+        sugerencias = servicio.obtener_sugerencias(consulta, limite)
+        return RespuestaSugerencias(elementos=sugerencias)
+    
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error getting suggestions: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error obteniendo sugerencias: {str(e)}")
+
+
+@router.get("/bebidas", response_model=List[Bebida])
+async def listar_bebidas(
+    categoria: Optional[str] = None,
+    limite: int = 50,
+    servicio: ServicioBebidas = Depends(obtener_servicio_bebidas)
+):
+    """Lista todas las bebidas disponibles."""
+    try:
+        bebidas = servicio.obtener_todas_bebidas(categoria, limite)
+        return bebidas
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error listando bebidas: {str(e)}")
+
+
+@router.get("/salud")
+async def verificar_salud():
+    """Endpoint de verificación de salud de la API."""
+    return {
+        "estado": "ok",
+        "mensaje": "API del asistente de bebidas funcionando correctamente",
+        "version": configuracion.version_app
+    }

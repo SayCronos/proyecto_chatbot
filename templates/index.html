@@ -160,44 +160,44 @@
         items.forEach(s => {
           const chip = document.createElement('div');
           chip.className = 'chip';
-          if (s.image_url) {
+          if (s.url_imagen) {
             const img = document.createElement('img');
-            img.src = s.image_url;
-            img.alt = s.name_es;
+            img.src = s.url_imagen;
+            img.alt = s.nombre_es;
             chip.appendChild(img);
           }
           const name = document.createElement('span');
           name.className = 'name';
-          name.textContent = s.name_es;
+          name.textContent = s.nombre_es;
           chip.appendChild(name);
-          if (s.price != null) {
+          if (s.precio != null) {
             const price = document.createElement('span');
             price.className = 'price';
-            price.textContent = `$${Number(s.price).toFixed(2)}`;
+            price.textContent = `$${Number(s.precio).toFixed(2)}`;
             chip.appendChild(price);
           }
-          chip.onclick = () => { $q.value = s.name_es; submitQuery(); };
+          chip.onclick = () => { $q.value = s.nombre_es; submitQuery(); };
           box.appendChild(chip);
         });
         return box;
       }
 
       function drinkCard(d, lang) {
-        console.log('Creating drink card for:', d.name_es, 'Image URL:', d.image_url);
+        console.log('Creating drink card for:', d.nombre_es, 'Image URL:', d.url_imagen);
         const wrap = document.createElement('div');
         wrap.className = 'drink-card';
-        if (d.image_url) {
-          console.log('Adding image:', d.image_url);
+        if (d.url_imagen) {
+          console.log('Adding image:', d.url_imagen);
           const img = document.createElement('img');
-          img.src = d.image_url; 
-          img.alt = d.name_es; 
+          img.src = d.url_imagen; 
+          img.alt = d.nombre_es; 
           img.style.width = '72px';
           img.style.height = '72px';
           img.style.objectFit = 'cover';
           img.style.borderRadius = '8px';
           img.style.border = '1px solid #e6ece9';
-          img.onload = () => console.log('Image loaded successfully:', d.image_url);
-          img.onerror = () => console.log('Image failed to load:', d.image_url);
+          img.onload = () => console.log('Image loaded successfully:', d.url_imagen);
+          img.onerror = () => console.log('Image failed to load:', d.url_imagen);
           wrap.appendChild(img);
         } else {
           console.log('No image URL, using placeholder');
@@ -208,24 +208,24 @@
         const body = document.createElement('div');
         const title = document.createElement('div');
         title.className = 'title';
-        title.textContent = d.name_es;
+        title.textContent = d.nombre_es;
         const meta = document.createElement('div');
         meta.className = 'meta';
-        const cal = (d.calories != null) ? `${Number(d.calories)}` : 'N/D';
-        const fat = (d.total_fat != null) ? `${Number(d.total_fat)}` : 'N/D';
-        const price = (d.price != null) ? `$${Number(d.price).toFixed(2)}` : 'N/D';
-        meta.textContent = `Tiempo: ${d.method} · Calorías: ${cal} kcal · Grasa: ${fat} g · Precio: ${price}`;
+        const cal = (d.calorias != null) ? `${Number(d.calorias)}` : 'N/D';
+        const fat = (d.grasa_total != null) ? `${Number(d.grasa_total)}` : 'N/D';
+        const price = (d.precio != null) ? `$${Number(d.precio).toFixed(2)}` : 'N/D';
+        meta.textContent = `Tiempo: ${d.metodo} · Calorías: ${cal} kcal · Grasa: ${fat} g · Precio: ${price}`;
         body.appendChild(title);
         body.appendChild(meta);
         
         // Agregar descripción si existe
-        if (d.description) {
+        if (d.descripcion) {
           const desc = document.createElement('div');
           desc.className = 'meta';
           desc.style.fontSize = '11px';
           desc.style.marginTop = '4px';
           desc.style.color = '#6b7a7a';
-          desc.textContent = d.description;
+          desc.textContent = d.descripcion;
           body.appendChild(desc);
         }
         
@@ -239,21 +239,21 @@
         msgUser(query);
         setBusy(true);
         try {
-          const res = await fetch('/api/search', {
+          const res = await fetch('/api/buscar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, lang: "es" })
+            body: JSON.stringify({ consulta: query, idioma: "es" })
           });
           const data = await res.json();
           if (!data.ok) throw new Error(data.error || 'request_failed');
-          msgAssistant(data.text);
-          if (data.found && data.data) {
-            const card = drinkCard(data.data, "es");
+          msgAssistant(data.texto);
+          if (data.encontrado && data.datos) {
+            const card = drinkCard(data.datos, "es");
             $chat.appendChild(card);
             scrollDown();
           }
-          if (!data.found && data.suggestions && data.suggestions.length) {
-            const box = pills(data.suggestions, 'Quizá te interesen:');
+          if (!data.encontrado && data.sugerencias && data.sugerencias.length) {
+            const box = pills(data.sugerencias, 'Quizá te interesen:');
             if (box) $chat.appendChild(box);
             scrollDown();
           }
@@ -283,12 +283,12 @@
 
       async function recommend() {
         try {
-          const res = await fetch('/api/suggestions?lang=es');
+          const res = await fetch('/api/sugerencias?consulta=&limite=5');
           const data = await res.json();
-          if (!data.ok || !data.items || !data.items.length) return;
-          const top = data.items[0];
-          msgAssistant(`Te recomiendo probar: <strong>${top.name_en}</strong>. ¿Quieres verlo?`);
-          const box = pills(data.items.slice(0, 6), 'Otras opciones:');
+          if (!data.ok || !data.elementos || !data.elementos.length) return;
+          const top = data.elementos[0];
+          msgAssistant(`Te recomiendo probar: <strong>${top.nombre_es}</strong>. ¿Quieres verlo?`);
+          const box = pills(data.elementos.slice(0, 6), 'Otras opciones:');
           if (box) $chat.appendChild(box);
           scrollDown();
         } catch (e) {}
@@ -296,10 +296,10 @@
 
       async function showPopular() {
         try {
-          const res = await fetch('/api/suggestions?lang=es');
+          const res = await fetch('/api/sugerencias?consulta=&limite=10');
           const data = await res.json();
           if (!data.ok) return;
-          const box = pills(data.items, 'Populares:');
+          const box = pills(data.elementos, 'Populares:');
           if (box) $chat.appendChild(box);
           scrollDown();
         } catch (e) {}

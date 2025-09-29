@@ -1,4 +1,4 @@
 """
 Servicios de la aplicación.
 """
-from .beverage_service import BeverageService
+from .servicio_bebidas import ServicioBebidas

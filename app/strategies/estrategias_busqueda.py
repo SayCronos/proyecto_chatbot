@@ -27,7 +27,7 @@ class EstrategiaCoincidenciaExacta(EstrategiaBusqueda):
             return None
             
         for bebida in bebidas:
-            if self._normalizar_para_comparacion(bebida.nombre) == consulta_normalizada:
+            if self._normalizar_para_comparacion(bebida.nombre_es) == consulta_normalizada:
                 return bebida
         return None
     
@@ -67,7 +67,7 @@ class EstrategiaSolapamientoTokens(EstrategiaBusqueda):
         mejor_puntuacion = 0
         
         for bebida in bebidas:
-            nombre_normalizado = self._normalizar_para_comparacion(bebida.nombre)
+            nombre_normalizado = self._normalizar_para_comparacion(bebida.nombre_es)
             tokens_nombre = set(nombre_normalizado.split())
             
             if not tokens_nombre:
@@ -120,7 +120,7 @@ class EstrategiaBusquedaDifusa(EstrategiaBusqueda):
         mejor_ratio = 0
         
         for bebida in bebidas:
-            nombre_normalizado = self._normalizar_para_comparacion(bebida.nombre)
+            nombre_normalizado = self._normalizar_para_comparacion(bebida.nombre_es)
             ratio = difflib.SequenceMatcher(None, consulta_normalizada, nombre_normalizado).ratio()
             
             if ratio >= self.umbral and ratio > mejor_ratio:

@@ -5,30 +5,30 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 
-class Settings(BaseSettings):
+class Configuracion(BaseSettings):
     """Configuración de la aplicación."""
     
     # Configuración del servidor
-    app_name: str = "Asistente de Bebidas Starbucks"
-    app_version: str = "2.0.0"
+    nombre_app: str = "Asistente de Bebidas Starbucks"
+    version_app: str = "2.0.0"
     debug: bool = False
     
     # Ruta del archivo CSV
-    csv_file_path: str = "starbucks2.csv"
+    ruta_archivo_csv: str = "starbucks2.csv"
     
     # Estrategias por defecto
-    default_search_strategy: str = "composite"
-    default_price_strategy: str = "premium"
-    default_response_strategy: str = "standard"
-    default_suggestion_strategy: str = "hybrid"
+    estrategia_busqueda_default: str = "compuesta"
+    estrategia_precio_default: str = "premium"
+    estrategia_respuesta_default: str = "estandar"
+    estrategia_sugerencia_default: str = "hibrida"
     
     # Configuración del servidor
-    host: str = "127.0.0.1"
-    port: int = 5000
+    host: str = "127.0.0.1"  # Cambiar a "0.0.0.0" para acceso de red local
+    puerto: int = 8000  # Puerto estándar para desarrollo web
     
     class Config:
         env_file = ".env"
 
 
 # Instancia global de configuración
-settings = Settings()
+configuracion = Configuracion()

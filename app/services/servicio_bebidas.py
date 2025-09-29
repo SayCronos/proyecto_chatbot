@@ -134,17 +134,17 @@ class ServicioBebidas:
         
         # Mapeo para starbucks2.csv (formato español)
         columna_nombre = encontrar([
-            "nombre bebida", "nombre de la bebida", "bebida", "nombre", "name es", "spanish name",
-            "nombre espanol", "nombre en espanol", "nombre español", "nombre en español",
+            "nombre_bebida", "nombre bebida", "nombre de la bebida", "bebida", "nombre", "name es", "spanish name",
+            "nombre espanol", "nombre de la bebida", "nombre español", "nombre en español",
             "beverage es", "drink es", "nombre de la bebida en espanol", "nombre de la bebida en español",
         ])
         columna_metodo = encontrar([
-            "tiempo de preparacion", "tiempo preparacion", "tiempo", "preparacion", "tiempo de preparación",
+            "tiempo_de_preparacion", "tiempo de preparacion", "tiempo preparacion", "tiempo", "preparacion", "tiempo de preparación",
             "method", "preparation", "metodo de preparacion", "metodo", "preparacion",
             "metodo de preparación", "método de preparación", "beverage prep",
         ])
         columna_calorias = encontrar(["calories", "calorias", "calorias kcal", "calorias (kcal)", "caloria"])
-        columna_grasa = encontrar(["grasa total", "total fat", "fat", "grasa", "total fat g"])
+        columna_grasa = encontrar(["grasa_total", "grasa total", "total fat", "fat", "grasa", "total fat g"])
         columna_precio = encontrar(["price", "precio", "price usd", "precio usd", "precio (usd)", "price ($)"])
         columna_descripcion = encontrar(["descripcion", "description", "descripción"])
         columna_imagen = encontrar(["imagen", "image", "image url", "url imagen", "imagen url"])
@@ -195,8 +195,9 @@ class ServicioBebidas:
             return None
         
         return Bebida(
-            nombre=nombre,
-            metodo_preparacion=metodo,
+            nombre_en=nombre,
+            nombre_es=nombre,  # Por ahora usamos el mismo nombre
+            metodo=metodo,
             calorias=calorias,
             grasa_total=grasa_total,
             categoria=categoria,
@@ -243,7 +244,7 @@ class ServicioBebidas:
         primera_vista: Dict[str, Bebida] = {}
         
         for bebida in self.bebidas:
-            clave = bebida.nombre
+            clave = bebida.nombre_es
             conteos[clave] = conteos.get(clave, 0) + 1
             if clave not in primera_vista:
                 primera_vista[clave] = bebida

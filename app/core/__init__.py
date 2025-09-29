@@ -1,4 +1,4 @@
 """
 Configuración central de la aplicación.
 """
-from .config import settings
+from .config import configuracion

@@ -30,8 +30,8 @@ class EstrategiaRespuestaEstandar(EstrategiaFormateoRespuesta):
         precio = f"${bebida.precio:.2f}" if bebida.precio is not None else "N/D"
         
         respuesta = (
-            f"Bebida: {bebida.nombre}\n"
-            f"Tiempo de preparación: {bebida.metodo_preparacion}\n"
+            f"Bebida: {bebida.nombre_es}\n"
+            f"Tiempo de preparación: {bebida.metodo}\n"
             f"Calorías: {calorias} kcal\n"
             f"Grasa total: {grasa} g\n"
             f"Precio: {precio}"
@@ -46,7 +46,7 @@ class EstrategiaRespuestaEstandar(EstrategiaFormateoRespuesta):
         """Formatea respuesta estándar para bebida no encontrada."""
         base = f"La bebida '{consulta}' no está disponible en el menú."
         if sugerencias:
-            sug = ", ".join(f"{s.nombre}" for s in sugerencias)
+            sug = ", ".join(f"{s.nombre_es}" for s in sugerencias)
             return f"{base} Quizá te interesen: {sug}."
         
         return base
@@ -68,8 +68,8 @@ class EstrategiaRespuestaDetallada(EstrategiaFormateoRespuesta):
         precio = f"${bebida.precio:.2f}" if bebida.precio is not None else "N/D"
         
         respuesta = (
-            f"🍵 **{bebida.nombre}**\n"
-            f"⏱️ Preparación: {bebida.metodo_preparacion}\n"
+            f"🍵 **{bebida.nombre_es}**\n"
+            f"⏱️ Preparación: {bebida.metodo}\n"
             f"🔥 Calorías: {calorias} kcal\n"
             f"🧈 Grasa total: {grasa} g\n"
             f"💰 Precio: {precio}"
@@ -86,7 +86,7 @@ class EstrategiaRespuestaDetallada(EstrategiaFormateoRespuesta):
         """Formatea respuesta detallada para bebida no encontrada."""
         base = f"❌ La bebida '{consulta}' no está disponible en nuestro menú."
         if sugerencias:
-            sug = ", ".join(f"**{s.nombre}**" for s in sugerencias)
+            sug = ", ".join(f"**{s.nombre_es}**" for s in sugerencias)
             return f"{base}\n\n💡 Quizá te interesen: {sug}."
         
         return base
@@ -106,13 +106,13 @@ class EstrategiaRespuestaCompacta(EstrategiaFormateoRespuesta):
         precio = f"${bebida.precio:.2f}" if bebida.precio is not None else "N/D"
         calorias = self._formatear_numero(bebida.calorias)
         
-        return f"{bebida.nombre} - {precio} | {calorias} kcal | {bebida.metodo_preparacion}"
+        return f"{bebida.nombre_es} - {precio} | {calorias} kcal | {bebida.metodo}"
     
     def formatear_respuesta_no_encontrada(self, consulta: str, sugerencias: List[Bebida]) -> str:
         """Formatea respuesta compacta para bebida no encontrada."""
         base = f"'{consulta}' no encontrada."
         if sugerencias:
-            sug = ", ".join(f"{s.nombre}" for s in sugerencias[:2])
+            sug = ", ".join(f"{s.nombre_es}" for s in sugerencias[:2])
             return f"{base} Prueba: {sug}."
         
         return base

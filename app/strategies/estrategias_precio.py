@@ -50,8 +50,8 @@ class EstrategiaPrecioPorFamilia(EstrategiaEstimacionPrecio):
     
     def estimar_precio(self, bebida: Bebida) -> float:
         """Estima precio basado en familia y tamaño de bebida."""
-        tamaño = self._inferir_tamaño_del_metodo(bebida.metodo_preparacion) or "Tall"
-        familia = self._inferir_familia_del_nombre(bebida.nombre)
+        tamaño = self._inferir_tamaño_del_metodo(bebida.metodo) or "Tall"
+        familia = self._inferir_familia_del_nombre(bebida.nombre_es)
         
         precios_por_familia = {
             "Café Preparado": {"Short": 2.25, "Tall": 2.45, "Grande": 2.65, "Venti": 2.85},

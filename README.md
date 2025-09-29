@@ -1,165 +1,165 @@
-#Chat Bot Asistente de bebidas de Starbucks (CLI + Web)
+# 🍵 Asistente de Bebidas Starbucks
 
-Proyecto demo que consulta bebidas de Starbucks desde un CSV y ofrece:
+Aplicación FastAPI refactorizada con patrón Strategy para búsqueda y recomendación de bebidas Starbucks.
 
-- CLI para buscar por nombre (inglés/español)
-- Servidor web con landing + chat flotante (widget) usando FastAPI
-- API JSON para búsqueda y sugerencias
+## ✨ Características
 
-## Características
+- 🔍 **Búsqueda inteligente**: Búsqueda tolerante a acentos y variaciones
+- 💰 **Estimación de precios**: Cálculo automático cuando no hay datos disponibles
+- 🎯 **Sugerencias**: Recomendaciones basadas en similitud y categorías
+- 🌐 **API REST**: Endpoints completos con FastAPI
+- 🖥️ **Interfaz web**: Chat interactivo y páginas HTML
+- 📱 **Acceso de red**: Configurable para acceso desde dispositivos móviles
 
-- Mantiene el idioma de la consulta o lo fuerza vía selector (ES/EN).
-- Formato de respuesta: Bebida/Drink, Preparación/Preparation, Calorías/Calories, Grasa total/Total Fat, Precio/Price.
-- Sugeriere cuando no hay coincidencia exacta.
-- Estimación de precio si el CSV no trae uno (familia + tamaño; recargo por leches alternativas).
-- Soporte de imágenes por bebida (columna `Image`/`Imagen`).
+## 🚀 Inicio Rápido
 
-## Estructura
-
-```
-proyecto/
-  main.py                  # CLI + servidor web (FastAPI)
-  starbucks.csv            # CSV de bebidas (tu archivo)
-  requirements.txt         # Dependencias (FastAPI + uvicorn)
-  templates/
-    home.html              # Landing tipo Starbucks con iframe del chat
-    index.html             # Chat (widget flotante)
-```
-
-## Requisitos
-
-- Python 3.9+
-- Pip/venv
-
-## Instalación
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+### Instalación
+```bash
 pip install -r requirements.txt
 ```
 
-## Uso (CLI)
+### Ejecutar la aplicación
+```bash
+# Servidor web (acceso local)
+python main_refactorizado.py
 
-```powershell
-python .\main.py "Caffè Latte" --csv .\starbucks.csv
+# Servidor web (acceso de red local)
+# Edita app/core/config.py y cambia host a "0.0.0.0"
+python main_refactorizado.py
 ```
 
-Salida (ES):
+### URLs de acceso
+- **Página principal**: http://localhost:8000
+- **Chat**: http://localhost:8000/chat
+- **API Docs**: http://localhost:8000/docs
+- **API Interactiva**: http://localhost:8000/redoc
+
+## 📁 Estructura del Proyecto
 
 ```
-Bebida: Caffè Latte (Caffè Latte)
-Preparación: Tall Nonfat Milk
-Calorías: 150 kcal
-Grasa total: 0.2 g
-Precio: $3.65
+proyecto_chatbot V2/
+├── main_refactorizado.py          # Aplicación principal
+├── starbucks2.csv                 # Base de datos de bebidas
+├── requirements.txt               # Dependencias
+├── app/
+│   ├── api/
+│   │   ├── routes.py             # Rutas API
+│   │   └── vistas.py             # Vistas HTML
+│   ├── core/
+│   │   └── config.py             # Configuración
+│   ├── models/
+│   │   └── beverage.py           # Modelos de datos
+│   ├── services/
+│   │   └── servicio_bebidas.py   # Lógica de negocio
+│   └── strategies/
+│       ├── estrategias_busqueda.py    # Estrategias de búsqueda
+│       ├── estrategias_precio.py      # Estrategias de precio
+│       ├── estrategias_respuesta.py   # Estrategias de respuesta
+│       └── estrategias_sugerencia.py  # Estrategias de sugerencia
+├── templates/
+│   ├── index.html                # Chat interactivo
+│   └── home.html                 # Página de inicio
+└── tests/                        # Pruebas unitarias
 ```
 
-## Servidor web
+## 🔧 Configuración
 
-```powershell
-python .\main.py --serve --csv .\starbucks.csv --host 127.0.0.1 --port 5000
+### Variables de entorno (.env)
+```env
+HOST=0.0.0.0                     # Para acceso de red local
+PUERTO=8000
+DEBUG=false
+RUTA_ARCHIVO_CSV=starbucks2.csv
 ```
 
-- GET `/` → landing tipo Starbucks (Bootstrap) con botón que abre el chat (iframe a `/chat?autopen=1`).
-- GET `/chat` → chat completo (widget en esquina inferior derecha). `?autopen=1` lo abre automáticamente.
-- Servidor FastAPI con uvicorn para mejor rendimiento y documentación automática.
+### Configuración de red local
+Para acceder desde otros dispositivos:
 
-Abre `http://127.0.0.1:5000` en tu navegador.
+1. **Edita** `app/core/config.py`:
+   ```python
+   host: str = "0.0.0.0"  # Cambiar de "127.0.0.1"
+   ```
 
-### Chat (UI)
+2. **Configura el firewall** (Windows):
+   ```powershell
+   New-NetFirewallRule -DisplayName "FastAPI Port 8000" -Direction Inbound -Protocol TCP -LocalPort 8000 -Action Allow
+   ```
 
-- Burbujas, selector de idioma, acciones rápidas (Recomiéndame, Ver populares).
-- Sugerencias con miniaturas (si hay `image_url`) y precio.
-- Tarjeta con imagen y detalles cuando hay coincidencia.
+3. **Obtén tu IP local**:
+   ```cmd
+   ipconfig | findstr "IPv4"
+   ```
 
-## API
+4. **Accede desde otros dispositivos**: `http://[TU_IP]:8000`
 
-### POST `/api/search`
+## 🎯 API Endpoints
 
-Request JSON:
+### Búsqueda de bebidas
+```http
+POST /api/buscar
+Content-Type: application/json
 
-```json
-{ "query": "Caffe Latte", "lang": "es" }
-```
-
-Respuesta (200) encontrado:
-
-```json
 {
-  "ok": true,
-  "found": true,
-  "lang": "es",
-  "data": {
-    "name_en": "Caffe Latte",
-    "name_es": "Caffe Latte",
-    "method": "Tall Nonfat Milk",
-    "calories": 150,
-    "total_fat": 0.2,
-    "price": 3.65,
-    "image_url": "https://.../latte.jpg"
-  },
-  "text": "Bebida: ..."
+  "consulta": "latte",
+  "idioma": "es"
 }
 ```
 
-Respuesta (200) no encontrado (con sugerencias):
-
-```json
-{
-  "ok": true,
-  "found": false,
-  "lang": "es",
-  "suggestions": [
-    { "name_en": "Caffè Latte", "price": 3.65, "image_url": "..." }
-  ],
-  "text": "La bebida 'X' no está disponible..."
-}
+### Sugerencias
+```http
+GET /api/sugerencias?consulta=cafe&limite=5
 ```
 
-### GET `/api/suggestions`
+### Listar bebidas
+```http
+GET /api/bebidas?categoria=espresso&limite=10
+```
 
-- Parámetros opcionales: `?query=latte&lang=es`
-- Devuelve sugerencias (o populares si no hay `query`).
+### Estado de la API
+```http
+GET /api/salud
+```
 
-### Documentación automática de la API
+## 🏗️ Arquitectura - Patrón Strategy
 
-FastAPI genera automáticamente documentación interactiva:
+La aplicación utiliza el patrón Strategy para:
 
-- Swagger UI: `http://127.0.0.1:5000/docs`
-- ReDoc: `http://127.0.0.1:5000/redoc`
+- **🔍 Búsqueda**: Exacta, difusa, compuesta
+- **💰 Precios**: Básico, por familia, premium  
+- **📝 Respuestas**: Estándar, detallada, compacta
+- **💡 Sugerencias**: Por similitud, por categoría, híbrida
 
-## CSV: columnas soportadas
+## 📱 Acceso desde Dispositivos Móviles
 
-Se detectan equivalencias (normalización sin acentos, guiones y guiones bajos):
+1. Conecta el dispositivo a la misma red Wi-Fi
+2. Configura `host: "0.0.0.0"` en la configuración
+3. Abre el navegador y ve a `http://[IP_LOCAL]:8000`
 
-- Nombre EN: `Beverage`, `Name EN`, `English Name`.
-- Nombre ES (opcional): `Name ES`, `Nombre Español`.
-- Método: `Beverage_prep`, `Method`, `Preparation`, `Método de preparación`.
-- Calorías: `Calories`, `Calorías (kcal)`.
-- Grasa total: `Total Fat (g)`, `Total Fat`, `Grasa total`.
-- Categoría (opcional): `Beverage_category`, `Category`.
-- Precio (opcional): `Price`, `Precio`, `Price USD`.
-- Imagen (opcional): `Image`, `Image URL`, `Imagen`.
+## 🛠️ Desarrollo
 
-### Estimación de precio
+### Ejecutar en modo desarrollo
+```bash
+python main_refactorizado.py  # Con recarga automática si debug=True
+```
 
-- Familias: Brewed Coffee, Americano, Latte, Cappuccino, Mocha.
-- Tamaños: Short/Tall/Grande/Venti inferidos desde `method`.
-- Recargo por leches alternativas (soya/almendra/avena).
+### Ejecutar pruebas
+```bash
+python -m pytest tests/
+```
 
-## Personalización
+## 📚 Documentación Adicional
 
-- Color del chat: `--accent: #006241` en `templates/index.html` y `templates/home.html`.
-- Autoapertura del chat: `/chat?autopen=1` (la home ya lo usa).
+- **README_NETWORK.md**: Guía completa de configuración de red
+- **MIGRATION_DOCUMENTATION.md**: Documentación de migración del código
 
-## Problemas comunes
+## 🤝 Contribuir
 
-- "Failed to load the CSV": revisa ruta `--csv` y que el CSV tenga encabezados.
-- No detecta columnas: confirma encabezados; se soportan `Beverage`, `Beverage_prep`, `Total Fat (g)`, etc.
-- Imágenes no se ven: URLs públicas HTTP/HTTPS.
-- Puerto ocupado: cambia `--port` (p. ej., `--port 5001`).
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crea un Pull Request
 
-## Licencia
+## 📄 Licencia
 
-Uso educativo/demostrativo.
+Este proyecto está bajo la Licencia MIT - ver el archivo LICENSE para detalles.

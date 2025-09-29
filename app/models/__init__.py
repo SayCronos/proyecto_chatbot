@@ -1,4 +1,4 @@
 """
 Modelos de datos de la aplicación.
 """
-from .beverage import Beverage, SearchRequest, SearchResponse, SuggestionsResponse
+from .beverage import Bebida, SolicitudBusqueda, RespuestaBusqueda, RespuestaSugerencias

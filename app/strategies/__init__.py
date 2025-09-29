@@ -1,7 +1,7 @@
 """
 Estrategias de la aplicación usando patrón Strategy.
 """
-from .search_strategy import SearchStrategy, ExactMatchStrategy, FuzzySearchStrategy, CompositeSearchStrategy
-from .price_strategy import PriceEstimationStrategy, BasicPriceStrategy, FamilyBasedPriceStrategy, PremiumPriceStrategy
-from .response_strategy import ResponseFormattingStrategy, StandardResponseStrategy, DetailedResponseStrategy, CompactResponseStrategy
-from .suggestion_strategy import SuggestionStrategy, SimilarityBasedSuggestionStrategy, HybridSuggestionStrategy
+from .estrategias_busqueda import EstrategiaBusqueda, EstrategiaCoincidenciaExacta, EstrategiaBusquedaDifusa, EstrategiaBusquedaCompuesta
+from .estrategias_precio import EstrategiaEstimacionPrecio, EstrategiaPrecioBasico, EstrategiaPrecioPorFamilia, EstrategiaPrecioPremium
+from .estrategias_respuesta import EstrategiaFormateoRespuesta, EstrategiaRespuestaEstandar, EstrategiaRespuestaDetallada, EstrategiaRespuestaCompacta
+from .estrategias_sugerencia import EstrategiaSugerencia, EstrategiaSugerenciaPorSimilitud, EstrategiaSugerenciaHibrida

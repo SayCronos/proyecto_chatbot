@@ -29,9 +29,9 @@ class EstrategiaSugerenciaPorSimilitud(EstrategiaSugerencia):
         claves_vistas: Set[str] = set()
         
         for bebida in bebidas:
-            nombre_normalizado = self._normalizar_para_comparacion(bebida.nombre)
+            nombre_normalizado = self._normalizar_para_comparacion(bebida.nombre_es)
             tokens_nombre = set(nombre_normalizado.split())
-            clave = bebida.nombre
+            clave = bebida.nombre_es
             
             if clave in claves_vistas:
                 continue
@@ -123,7 +123,7 @@ class EstrategiaSugerenciaPorPopularidad(EstrategiaSugerencia):
         # Calcular popularidad por frecuencia de aparición
         conteos_popularidad = {}
         for bebida in bebidas:
-            clave = bebida.nombre
+            clave = bebida.nombre_es
             conteos_popularidad[clave] = conteos_popularidad.get(clave, 0) + 1
         
         # Obtener sugerencias por similitud
@@ -135,7 +135,7 @@ class EstrategiaSugerenciaPorPopularidad(EstrategiaSugerencia):
         claves_vistas = set()
         
         for bebida in bebidas_similares:
-            clave = bebida.nombre
+            clave = bebida.nombre_es
             if clave not in claves_vistas:
                 popularidad = conteos_popularidad.get(clave, 1)
                 sugerencias_populares.append((popularidad, bebida))
@@ -168,7 +168,7 @@ class EstrategiaSugerenciaHibrida(EstrategiaSugerencia):
         # Combinar resultados priorizando diversidad
         for resultados_estrategia in resultados_estrategias:
             for bebida in resultados_estrategia:
-                clave = bebida.nombre
+                clave = bebida.nombre_es
                 if clave not in claves_vistas and len(todas_sugerencias) < max_sugerencias:
                     todas_sugerencias.append(bebida)
                     claves_vistas.add(clave)
