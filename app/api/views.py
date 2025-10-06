@@ -30,10 +30,4 @@ async def home(request: Request):
     })
 
 
-@views_router.get("/chat", response_class=HTMLResponse)
-async def chat_interface(request: Request):
-    """Interfaz de chat para interactuar con el chatbot."""
-    return templates.TemplateResponse("index.html", {
-        "request": request,
-        "csv_filename": "starbucks2.csv"
-    })
+# Ruta /chat eliminada - el chatbot ahora está integrado en home.html

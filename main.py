@@ -496,12 +496,7 @@ def create_app(beverages: List[Beverage], csv_filename: str) -> "FastAPI":
             "csv_filename": csv_filename
         })
 
-    @app.get("/chat", response_class=HTMLResponse)
-    async def index(request: Request):
-        return templates.TemplateResponse("index.html", {
-            "request": request,
-            "csv_filename": csv_filename
-        })
+    # Ruta /chat eliminada - el chatbot ahora está integrado en home.html
 
     @app.get("/api/suggestions", response_model=SuggestionsResponse)
     async def api_suggestions(query: str = "", lang: str = ""):

@@ -6,8 +6,12 @@ from typing import List, Optional
 from functools import lru_cache
 from pathlib import Path
 
-from app.models.beverage import Bebida, SolicitudBusqueda, RespuestaBusqueda, RespuestaSugerencias
+from app.models.beverage import (
+    Bebida, SolicitudBusqueda, RespuestaBusqueda, RespuestaSugerencias,
+    SolicitudAgregarCarrito, SolicitudActualizarCarrito, RespuestaCarrito, Carrito
+)
 from app.services.servicio_bebidas import ServicioBebidas
+from app.services.servicio_carrito import ServicioCarrito
 from app.core.config import configuracion
 
 
@@ -19,6 +23,13 @@ def obtener_servicio_bebidas() -> ServicioBebidas:
     """Obtiene instancia del servicio de bebidas con caché."""
     ruta_csv = Path(configuracion.ruta_archivo_csv)
     return ServicioBebidas(ruta_csv)
+
+
+@lru_cache()
+def obtener_servicio_carrito() -> ServicioCarrito:
+    """Obtiene instancia del servicio de carrito con caché."""
+    servicio_bebidas = obtener_servicio_bebidas()
+    return ServicioCarrito(servicio_bebidas)
 
 
 @router.post("/buscar", response_model=RespuestaBusqueda)
@@ -88,3 +99,123 @@ async def verificar_salud():
         "mensaje": "API del asistente de bebidas funcionando correctamente",
         "version": configuracion.version_app
     }
+
+
+# ========== ENDPOINTS DEL CARRITO DE COMPRAS ==========
+
+@router.get("/carrito", response_model=Carrito)
+async def obtener_carrito(
+    sesion_id: str = "default",
+    servicio: ServicioCarrito = Depends(obtener_servicio_carrito)
+):
+    """Obtiene el carrito actual de una sesión."""
+    try:
+        carrito = servicio.obtener_carrito(sesion_id)
+        return carrito
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error obteniendo carrito: {str(e)}")
+
+
+@router.post("/carrito/agregar", response_model=RespuestaCarrito)
+async def agregar_al_carrito(
+    solicitud: SolicitudAgregarCarrito,
+    sesion_id: str = "default",
+    servicio: ServicioCarrito = Depends(obtener_servicio_carrito)
+):
+    """Agrega una bebida al carrito."""
+    try:
+        resultado = servicio.agregar_al_carrito(
+            solicitud.nombre_bebida, 
+            solicitud.cantidad, 
+            sesion_id
+        )
+        
+        if not resultado["ok"]:
+            raise HTTPException(status_code=400, detail=resultado["mensaje"])
+        
+        return RespuestaCarrito(**resultado)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error agregando al carrito: {str(e)}")
+
+
+@router.put("/carrito/actualizar", response_model=RespuestaCarrito)
+async def actualizar_cantidad_carrito(
+    solicitud: SolicitudActualizarCarrito,
+    sesion_id: str = "default",
+    servicio: ServicioCarrito = Depends(obtener_servicio_carrito)
+):
+    """Actualiza la cantidad de un item en el carrito."""
+    try:
+        resultado = servicio.actualizar_cantidad(
+            solicitud.nombre_bebida,
+            solicitud.cantidad,
+            sesion_id
+        )
+        
+        if not resultado["ok"]:
+            raise HTTPException(status_code=400, detail=resultado["mensaje"])
+        
+        return RespuestaCarrito(**resultado)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error actualizando carrito: {str(e)}")
+
+
+@router.delete("/carrito/eliminar/{nombre_bebida}")
+async def eliminar_del_carrito(
+    nombre_bebida: str,
+    sesion_id: str = "default",
+    servicio: ServicioCarrito = Depends(obtener_servicio_carrito)
+):
+    """Elimina un item específico del carrito."""
+    try:
+        resultado = servicio.eliminar_del_carrito(nombre_bebida, sesion_id)
+        
+        if not resultado["ok"]:
+            raise HTTPException(status_code=400, detail=resultado["mensaje"])
+        
+        return RespuestaCarrito(**resultado)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error eliminando del carrito: {str(e)}")
+
+
+@router.delete("/carrito/vaciar")
+async def vaciar_carrito(
+    sesion_id: str = "default",
+    servicio: ServicioCarrito = Depends(obtener_servicio_carrito)
+):
+    """Vacía completamente el carrito."""
+    try:
+        resultado = servicio.vaciar_carrito(sesion_id)
+        return RespuestaCarrito(**resultado)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error vaciando carrito: {str(e)}")
+
+
+@router.post("/carrito/finalizar")
+async def finalizar_compra(
+    sesion_id: str = "default",
+    servicio: ServicioCarrito = Depends(obtener_servicio_carrito)
+):
+    """Finaliza la compra y vacía el carrito."""
+    try:
+        resultado = servicio.finalizar_compra(sesion_id)
+        
+        if not resultado["ok"]:
+            raise HTTPException(status_code=400, detail=resultado["mensaje"])
+        
+        return resultado
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error finalizando compra: {str(e)}")

@@ -7,6 +7,7 @@ Aplicación FastAPI refactorizada con patrón Strategy para búsqueda y recomend
 - 🔍 **Búsqueda inteligente**: Búsqueda tolerante a acentos y variaciones
 - 💰 **Estimación de precios**: Cálculo automático cuando no hay datos disponibles
 - 🎯 **Sugerencias**: Recomendaciones basadas en similitud y categorías
+- 🛒 **Carrito de compras**: Sistema completo con persistencia localStorage
 - 🌐 **API REST**: Endpoints completos con FastAPI
 - 🖥️ **Interfaz web**: Chat interactivo y páginas HTML
 - 📱 **Acceso de red**: Configurable para acceso desde dispositivos móviles
@@ -43,14 +44,15 @@ proyecto_chatbot V2/
 ├── requirements.txt               # Dependencias
 ├── app/
 │   ├── api/
-│   │   ├── routes.py             # Rutas API
+│   │   ├── routes.py             # Rutas API (incluye endpoints del carrito)
 │   │   └── vistas.py             # Vistas HTML
 │   ├── core/
 │   │   └── config.py             # Configuración
 │   ├── models/
-│   │   └── beverage.py           # Modelos de datos
+│   │   └── beverage.py           # Modelos de datos (incluye carrito)
 │   ├── services/
-│   │   └── servicio_bebidas.py   # Lógica de negocio
+│   │   ├── servicio_bebidas.py   # Lógica de negocio de bebidas
+│   │   └── servicio_carrito.py   # Lógica de negocio del carrito
 │   └── strategies/
 │       ├── estrategias_busqueda.py    # Estrategias de búsqueda
 │       ├── estrategias_precio.py      # Estrategias de precio
@@ -120,6 +122,16 @@ GET /api/bebidas?categoria=espresso&limite=10
 GET /api/salud
 ```
 
+### Carrito de compras
+```http
+GET    /api/carrito                    # Obtener carrito actual
+POST   /api/carrito/agregar            # Agregar bebida al carrito
+PUT    /api/carrito/actualizar         # Actualizar cantidad
+DELETE /api/carrito/eliminar/{bebida}  # Eliminar item específico
+DELETE /api/carrito/vaciar             # Vaciar carrito
+POST   /api/carrito/finalizar          # Finalizar compra
+```
+
 ## 🏗️ Arquitectura - Patrón Strategy
 
 La aplicación utiliza el patrón Strategy para:
@@ -151,6 +163,7 @@ python -m pytest tests/
 
 - **README_NETWORK.md**: Guía completa de configuración de red
 - **MIGRATION_DOCUMENTATION.md**: Documentación de migración del código
+- **CARRITO_DOCUMENTATION.md**: Documentación completa del sistema de carrito
 
 ## 🤝 Contribuir
 

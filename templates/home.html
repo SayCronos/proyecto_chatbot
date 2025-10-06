@@ -37,6 +37,140 @@
       iframe#chat-frame { position: fixed; bottom: 20px; right: 20px; width: 360px; height: 560px; border: 0; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.2); display: none; z-index: 1000; }
       .launcher { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; display:grid;place-items:center; background: var(--accent); color: #fff; border: 0; box-shadow: 0 10px 25px rgba(0,0,0,.2); z-index: 999; }
       .launcher.hidden { display: none; }
+      
+      /* Carrito flotante */
+      .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 1001; transition: right 0.3s ease; overflow-y: auto; }
+      .cart-sidebar.open { right: 0; }
+      .cart-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+      .cart-overlay.show { opacity: 1; pointer-events: auto; }
+      .cart-header { background: var(--accent); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+      .cart-title { font-weight: 700; font-size: 18px; }
+      .cart-close { background: none; border: none; color: white; font-size: 24px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+      .cart-close:hover { background: rgba(255,255,255,0.1); }
+      .cart-content { padding: 16px; }
+      .cart-empty { text-align: center; color: #6b7a7a; padding: 40px 20px; }
+      .cart-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid #e6ece9; }
+      .cart-item:last-child { border-bottom: none; }
+      .cart-item img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+      .cart-item-info { flex: 1; }
+      .cart-item-name { font-weight: 600; margin-bottom: 4px; }
+      .cart-item-price { color: #6b7a7a; font-size: 14px; }
+      .cart-item-controls { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+      .qty-btn { width: 28px; height: 28px; border: 1px solid #ddd; background: white; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
+      .qty-btn:hover { background: #f5f5f5; }
+      .qty-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+      .qty-display { min-width: 30px; text-align: center; font-weight: 600; }
+      .remove-btn { background: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: auto; }
+      .remove-btn:hover { background: #c82333; }
+      .cart-summary { border-top: 2px solid #e6ece9; padding-top: 16px; margin-top: 16px; }
+      .cart-total { display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+      .btn-checkout { width: 100%; background: var(--accent); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+      .btn-checkout:hover { background: #004d33; }
+      .btn-checkout:disabled { opacity: 0.5; cursor: not-allowed; }
+      
+      /* Botón del carrito flotante */
+      .cart-button { position: fixed; bottom: 90px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 999; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+      .cart-button:hover { background: #004d33; }
+      .cart-badge { position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+      
+      /* Modal estilo Starbucks */
+      .starbucks-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+      .starbucks-modal.show { display: flex; }
+      .modal-content { background: white; border-radius: 16px; padding: 0; max-width: 420px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3); overflow: hidden; animation: modalSlideIn 0.3s ease-out; }
+      .modal-header { background: linear-gradient(135deg, var(--accent), #004d33); color: white; padding: 24px; text-align: center; position: relative; }
+      .modal-header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="70" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>'); animation: sparkle 4s linear infinite; }
+      .modal-icon { font-size: 48px; margin-bottom: 12px; display: block; }
+      .modal-title { font-size: 24px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+      .modal-body { padding: 32px 24px; text-align: center; }
+      .modal-message { font-size: 18px; color: #1e3932; margin-bottom: 24px; line-height: 1.4; }
+      .modal-details { background: #f8faf9; border-radius: 12px; padding: 16px; margin-bottom: 24px; border-left: 4px solid var(--accent); }
+      .modal-details-title { font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+      .modal-details-text { color: #6b7a7a; font-size: 14px; line-height: 1.4; }
+      .modal-product-item { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+      .modal-product-item:last-of-type { margin-bottom: 0; }
+      .modal-product-image { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1px solid #e6ece9; flex-shrink: 0; }
+      .modal-product-info { flex: 1; }
+      .modal-product-name { font-weight: 600; margin-bottom: 2px; }
+      .modal-product-price { color: #6b7a7a; font-size: 13px; }
+      .modal-footer { padding: 0 24px 24px; display: flex; gap: 12px; }
+      .modal-btn { flex: 1; padding: 14px 20px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
+      .modal-btn-primary { background: var(--accent); color: white; }
+      .modal-btn-primary:hover { background: #004d33; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,98,65,0.3); }
+      .modal-btn-secondary { background: #f1f6f4; color: var(--accent); border: 1px solid #d6e4de; }
+      .modal-btn-secondary:hover { background: #e8f3ee; }
+      
+      @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      
+      @keyframes sparkle {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+      }
+      
+      /* ========== ESTILOS DEL CHATBOT ========== */
+      .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 360px;
+        max-width: 94vw;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        background: #ffffff;
+        border: 1px solid rgba(0,0,0,0.06);
+        transform: translateY(16px) scale(0.98);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform .2s ease, opacity .2s ease;
+        z-index: 1000;
+      }
+      .chat-widget.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+      .chat-launcher {
+        position: fixed;
+        bottom: 160px; /* Posicionado arriba del carrito */
+        right: 20px;
+        width: 56px; height: 56px;
+        border-radius: 50%;
+        display: grid; place-items: center;
+        background: var(--accent); color: var(--fg);
+        box-shadow: 0 10px 25px rgba(0,0,0,.2);
+        cursor: pointer;
+        z-index: 999;
+        border: none;
+      }
+      .chat-launcher.hidden { display: none; }
+      .chat-widget-header {
+        background: var(--accent);
+        color: var(--fg);
+        padding: 12px 16px;
+        display: flex; align-items: center; justify-content: space-between;
+      }
+      .chat-widget-title { font-weight: 700; letter-spacing: .5px; }
+      .chat-icon-btn { width: 28px; height: 28px; border-radius: 50%; display:grid; place-items:center; cursor:pointer; border:1px solid rgba(255,255,255,.6); color:#fff; }
+      .chat-area { padding: 12px 12px 0 12px; height: 56vh; max-height: 56vh; overflow: auto; background: linear-gradient(180deg, #f7faf9, #eef6f2); }
+      .chat-composer { padding: 12px; background: #fff; border-top: 1px solid #e6ece9; }
+      .chat-pill { display:inline-block; background: #f0f5f3; border:1px solid #d6e4de; padding:6px 10px; border-radius: 999px; margin:6px 6px 0 0; font-size:12px; cursor:pointer; }
+      .chat-muted { color: var(--muted); }
+      .chat-bubble { border-radius: 16px; padding: 10px 12px; max-width: 82%; }
+      .chat-bubble-user { background: var(--accent); color: var(--fg); align-self: flex-end; border-top-right-radius: 6px; }
+      .chat-bubble-bot { background: #ffffff; color: var(--text); align-self: flex-start; border: 1px solid #e8efea; border-top-left-radius: 6px; }
+      /* Chips con miniatura para sugerencias */
+      .chat-chip { display: inline-flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #e1ebe6; border-radius: 999px; padding: 6px 10px; margin: 6px 6px 0 0; cursor: pointer; box-shadow: 0 1px 0 rgba(0,0,0,0.02); }
+      .chat-chip:hover { background: #f7fbf9; }
+      .chat-chip img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; border: 1px solid #e6ece9; }
+      .chat-chip .name { font-size: 12px; color: #17221f; }
+      .chat-chip .price { font-size: 12px; color: var(--muted); margin-left: 4px; }
+      /* Tarjeta de bebida con imagen */
+      .chat-drink-card { display: grid; grid-template-columns: 72px 1fr; gap: 12px; background: #ffffff; border: 1px solid #e6ece9; border-radius: 12px; padding: 10px; margin-top: 6px; }
+      .chat-drink-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #e6ece9; }
+      .chat-drink-card .title { font-weight: 700; margin-bottom: 2px; }
+      .chat-drink-card .meta { font-size: 12px; color: var(--muted); }
+      .chat-drink-card .actions { margin-top: 8px; }
+      .chat-btn-add-cart { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+      .chat-btn-add-cart:hover { background: #004d33; }
     </style>
   </head>
   <body>
@@ -107,20 +241,696 @@
     <div class="footer container py-5">
     </div>
 
-    <!-- Chat embed -->
-    <button id="launcher" class="launcher" title="Abrir chat">💬</button>
-    <iframe id="chat-frame" src="/chat?autopen=1" title="Chat"></iframe>
+    <!-- Chatbot integrado -->
+    <button id="chat-launcher" class="chat-launcher" title="Abrir chat">💬</button>
+    
+    <div id="chat-widget" class="chat-widget">
+      <div class="chat-widget-header">
+        <div class="d-flex align-items-center gap-2">
+          <div id="chat-btn-close" class="chat-icon-btn" title="Cerrar">×</div>
+          <div id="chat-btn-min" class="chat-icon-btn" title="Minimizar">–</div>
+        </div>
+        <div class="chat-widget-title">CHATBOT</div>
+        <div style="width: 56px;"></div>
+      </div>
+      <div id="chat-messages" class="chat-area d-flex flex-column gap-2"></div>
+      <div class="chat-composer">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-0 pe-0">➕</span>
+          <input id="chat-input" type="text" class="form-control border-0" placeholder="Escribe tu bebida o pide una recomendación" />
+          <button id="chat-send" class="btn btn-success" style="background-color: var(--accent); border-color: var(--accent);">▶</button>
+        </div>
+        <div class="hint chat-muted mt-1">Puedes escribir en español o inglés.</div>
+      </div>
+    </div>
+
+    <!-- Botón flotante del carrito -->
+    <button id="cart-button" class="cart-button" title="Ver carrito">
+      🛒
+      <span id="cart-badge" class="cart-badge" style="display: none;">0</span>
+    </button>
+
+    <!-- Overlay del carrito -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+
+    <!-- Sidebar del carrito -->
+    <div id="cart-sidebar" class="cart-sidebar">
+      <div class="cart-header">
+        <div class="cart-title">Mi Carrito</div>
+        <button id="cart-close" class="cart-close">×</button>
+      </div>
+      <div class="cart-content">
+        <div id="cart-items"></div>
+        <div id="cart-summary" class="cart-summary" style="display: none;">
+          <div class="cart-total">
+            <span>Total:</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+          <button id="btn-checkout" class="btn-checkout">Finalizar Compra</button>
+        </div>
+        <div id="cart-empty" class="cart-empty">
+          <p>Tu carrito está vacío</p>
+          <p>¡Agrega algunas bebidas deliciosas desde el chat!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal estilo Starbucks -->
+    <div id="starbucks-modal" class="starbucks-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span id="modal-icon" class="modal-icon">🎉</span>
+          <h3 id="modal-title" class="modal-title">¡Compra Finalizada!</h3>
+        </div>
+        <div class="modal-body">
+          <p id="modal-message" class="modal-message">Tu pedido ha sido procesado exitosamente</p>
+          <div id="modal-details" class="modal-details">
+            <div class="modal-details-title">Resumen de tu pedido</div>
+            <div id="modal-details-text" class="modal-details-text">1 productos por $5.20</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="modal-btn-secondary" class="modal-btn modal-btn-secondary">Ver Carrito</button>
+          <button id="modal-btn-primary" class="modal-btn modal-btn-primary">¡Perfecto!</button>
+        </div>
+      </div>
+    </div>
 
     <script>
-      const launcher = document.getElementById('launcher');
-      const frame = document.getElementById('chat-frame');
-      let open = false;
-      launcher.addEventListener('click', () => {
-        open = !open;
-        frame.style.display = open ? 'block' : 'none';
-        launcher.textContent = open ? '×' : '💬';
-        if (open) frame.focus();
+      // Variables del chatbot integrado
+      const $chatLauncher = document.getElementById('chat-launcher');
+      const $chatWidget = document.getElementById('chat-widget');
+      const $chatBtnClose = document.getElementById('chat-btn-close');
+      const $chatBtnMin = document.getElementById('chat-btn-min');
+      const $chatMessages = document.getElementById('chat-messages');
+      const $chatInput = document.getElementById('chat-input');
+      const $chatSend = document.getElementById('chat-send');
+      let chatOpen = false;
+      
+      // Variables del carrito
+      const $cartButton = document.getElementById('cart-button');
+      const $cartBadge = document.getElementById('cart-badge');
+      const $cartOverlay = document.getElementById('cart-overlay');
+      const $cartSidebar = document.getElementById('cart-sidebar');
+      const $cartClose = document.getElementById('cart-close');
+      const $cartItems = document.getElementById('cart-items');
+      const $cartSummary = document.getElementById('cart-summary');
+      const $cartTotal = document.getElementById('cart-total');
+      const $cartEmpty = document.getElementById('cart-empty');
+      const $btnCheckout = document.getElementById('btn-checkout');
+
+      // Variables del modal
+      const $modal = document.getElementById('starbucks-modal');
+      const $modalIcon = document.getElementById('modal-icon');
+      const $modalTitle = document.getElementById('modal-title');
+      const $modalMessage = document.getElementById('modal-message');
+      const $modalDetails = document.getElementById('modal-details');
+      const $modalDetailsText = document.getElementById('modal-details-text');
+      const $modalBtnPrimary = document.getElementById('modal-btn-primary');
+      const $modalBtnSecondary = document.getElementById('modal-btn-secondary');
+
+      // Estado del carrito (se sincroniza con localStorage)
+      let carritoLocal = {
+        items: [],
+        total: 0
+      };
+
+      // ========== FUNCIONES DEL CARRITO ==========
+
+      /**
+       * Carga el carrito desde localStorage
+       */
+      function cargarCarrito() {
+        try {
+          const carritoGuardado = localStorage.getItem('starbucks_carrito');
+          if (carritoGuardado) {
+            carritoLocal = JSON.parse(carritoGuardado);
+            actualizarVisualizacionCarrito();
+          }
+        } catch (e) {
+          console.error('Error cargando carrito:', e);
+        }
+      }
+
+      /**
+       * Guarda el carrito en localStorage
+       */
+      function guardarCarrito() {
+        try {
+          localStorage.setItem('starbucks_carrito', JSON.stringify(carritoLocal));
+        } catch (e) {
+          console.error('Error guardando carrito:', e);
+        }
+      }
+
+      /**
+       * Actualiza la visualización del carrito (badge y contenido)
+       */
+      function actualizarVisualizacionCarrito() {
+        const totalItems = carritoLocal.items.reduce((sum, item) => sum + item.cantidad, 0);
+        
+        // Actualizar badge
+        if (totalItems > 0) {
+          $cartBadge.textContent = totalItems;
+          $cartBadge.style.display = 'flex';
+        } else {
+          $cartBadge.style.display = 'none';
+        }
+
+        // Actualizar contenido del carrito
+        if (carritoLocal.items.length === 0) {
+          $cartEmpty.style.display = 'block';
+          $cartSummary.style.display = 'none';
+          $cartItems.innerHTML = '';
+        } else {
+          $cartEmpty.style.display = 'none';
+          $cartSummary.style.display = 'block';
+          renderizarItemsCarrito();
+          $cartTotal.textContent = `$${carritoLocal.total.toFixed(2)}`;
+        }
+      }
+
+      /**
+       * Renderiza los items del carrito en el sidebar
+       */
+      function renderizarItemsCarrito() {
+        $cartItems.innerHTML = '';
+        
+        carritoLocal.items.forEach(item => {
+          const itemDiv = document.createElement('div');
+          itemDiv.className = 'cart-item';
+          
+          const precio = item.bebida.precio || 0;
+          const subtotal = precio * item.cantidad;
+          
+          itemDiv.innerHTML = `
+            <img src="${item.bebida.url_imagen || ''}" alt="${item.bebida.nombre_es}" 
+                 onerror="this.style.display='none'" />
+            <div class="cart-item-info">
+              <div class="cart-item-name">${item.bebida.nombre_es}</div>
+              <div class="cart-item-price">$${precio.toFixed(2)} c/u</div>
+              <div class="cart-item-controls">
+                <button class="qty-btn" onclick="cambiarCantidad('${item.bebida.nombre_es}', ${item.cantidad - 1})">-</button>
+                <span class="qty-display">${item.cantidad}</span>
+                <button class="qty-btn" onclick="cambiarCantidad('${item.bebida.nombre_es}', ${item.cantidad + 1})">+</button>
+                <button class="remove-btn" onclick="eliminarDelCarrito('${item.bebida.nombre_es}')">Eliminar</button>
+              </div>
+              <div style="font-weight: 600; margin-top: 4px;">Subtotal: $${subtotal.toFixed(2)}</div>
+            </div>
+          `;
+          
+          $cartItems.appendChild(itemDiv);
+        });
+      }
+
+      /**
+       * Cambia la cantidad de un item en el carrito
+       */
+      function cambiarCantidad(nombreBebida, nuevaCantidad) {
+        if (nuevaCantidad <= 0) {
+          eliminarDelCarrito(nombreBebida);
+          return;
+        }
+        
+        const item = carritoLocal.items.find(item => item.bebida.nombre_es === nombreBebida);
+        if (item) {
+          item.cantidad = nuevaCantidad;
+          item.subtotal = (item.bebida.precio || 0) * nuevaCantidad;
+          carritoLocal.total = carritoLocal.items.reduce((sum, item) => sum + item.subtotal, 0);
+          
+          guardarCarrito();
+          actualizarVisualizacionCarrito();
+        }
+      }
+
+      /**
+       * Elimina un item del carrito
+       */
+      function eliminarDelCarrito(nombreBebida) {
+        carritoLocal.items = carritoLocal.items.filter(item => item.bebida.nombre_es !== nombreBebida);
+        carritoLocal.total = carritoLocal.items.reduce((sum, item) => sum + item.subtotal, 0);
+        
+        guardarCarrito();
+        actualizarVisualizacionCarrito();
+        mostrarModalEliminacion(nombreBebida);
+      }
+
+      /**
+       * Finaliza la compra
+       */
+      async function finalizarCompra() {
+        if (carritoLocal.items.length === 0) {
+          mostrarModalError('El carrito está vacío. ¡Agrega algunas bebidas deliciosas!');
+          return;
+        }
+        
+        const totalItems = carritoLocal.items.reduce((sum, item) => sum + item.cantidad, 0);
+        const totalPrecio = carritoLocal.total;
+        const itemsComprados = [...carritoLocal.items]; // Hacer copia antes de vaciar
+        
+        // Vaciar carrito
+        carritoLocal = { items: [], total: 0 };
+        guardarCarrito();
+        actualizarVisualizacionCarrito();
+        
+        // Cerrar carrito y mostrar modal con detalles
+        cerrarCarrito();
+        mostrarModalCompraFinalizada(totalItems, totalPrecio, itemsComprados);
+      }
+
+      /**
+       * Abre el carrito
+       */
+      function abrirCarrito() {
+        $cartSidebar.classList.add('open');
+        $cartOverlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+
+      /**
+       * Cierra el carrito
+       */
+      function cerrarCarrito() {
+        $cartSidebar.classList.remove('open');
+        $cartOverlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      // ========== FUNCIONES DEL MODAL STARBUCKS ==========
+
+      /**
+       * Muestra el modal estilo Starbucks
+       */
+      function mostrarModal(config) {
+        // Configurar contenido del modal
+        $modalIcon.textContent = config.icon || '🎉';
+        $modalTitle.textContent = config.title || '¡Éxito!';
+        $modalMessage.textContent = config.message || 'Operación completada';
+        
+        // Configurar detalles si existen
+        if (config.details) {
+          // Usar innerHTML para permitir HTML en los detalles
+          $modalDetailsText.innerHTML = config.details;
+          $modalDetails.style.display = 'block';
+        } else {
+          $modalDetails.style.display = 'none';
+        }
+        
+        // Configurar botones
+        $modalBtnPrimary.textContent = config.primaryButton || '¡Perfecto!';
+        $modalBtnSecondary.textContent = config.secondaryButton || 'Ver Carrito';
+        
+        // Mostrar modal
+        $modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Auto-cerrar después de 5 segundos si no hay interacción
+        setTimeout(() => {
+          if ($modal.classList.contains('show')) {
+            cerrarModal();
+          }
+        }, 5000);
+      }
+
+      /**
+       * Cierra el modal
+       */
+      function cerrarModal() {
+        $modal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      /**
+       * Muestra modal de compra finalizada
+       */
+      function mostrarModalCompraFinalizada(totalItems, totalPrecio, itemsComprados) {
+        // Crear lista detallada de productos con mejor formato e imágenes
+        let detallesProductos = '';
+        itemsComprados.forEach((item, index) => {
+          const cantidad = item.cantidad;
+          const nombre = item.bebida.nombre_es;
+          const precio = item.bebida.precio || 0;
+          const subtotal = precio * cantidad;
+          const imagen = item.bebida.url_imagen || '';
+          
+          // Crear contenedor para cada producto con imagen
+          detallesProductos += `
+            <div class="modal-product-item">
+              <img src="${imagen}" alt="${nombre}" class="modal-product-image" onerror="this.style.display='none'">
+              <div class="modal-product-info">
+                <div class="modal-product-name"><strong>${cantidad}x</strong> ${nombre}</div>
+                <div class="modal-product-price">$${precio.toFixed(2)} c/u = $${subtotal.toFixed(2)}</div>
+              </div>
+            </div>
+          `;
+        });
+        
+        // Agregar total con separador visual
+        detallesProductos += '<hr style="margin: 16px 0; border: 1px solid #e6ece9;">';
+        detallesProductos += `<div style="text-align: center;"><strong style="color: var(--accent); font-size: 16px;">Total: $${totalPrecio.toFixed(2)}</strong></div>`;
+        
+        mostrarModal({
+          icon: '🎉',
+          title: '¡Compra Finalizada!',
+          message: 'Tu pedido ha sido procesado exitosamente',
+          details: detallesProductos,
+          primaryButton: '¡Perfecto!',
+          secondaryButton: 'Seguir Comprando'
+        });
+      }
+
+      /**
+       * Muestra modal de error
+       */
+      function mostrarModalError(mensaje) {
+        mostrarModal({
+          icon: '❌',
+          title: 'Oops!',
+          message: mensaje,
+          details: null,
+          primaryButton: 'Entendido',
+          secondaryButton: 'Reintentar'
+        });
+      }
+
+      /**
+       * Muestra modal de eliminación
+       */
+      function mostrarModalEliminacion(nombreBebida) {
+        mostrarModal({
+          icon: '🗑️',
+          title: 'Producto Eliminado',
+          message: `${nombreBebida} ha sido eliminado de tu carrito`,
+          details: null,
+          primaryButton: 'OK',
+          secondaryButton: 'Deshacer'
+        });
+      }
+
+      // ========== FUNCIONES DEL CHATBOT ==========
+
+      function setChatBusy(b) { 
+        $chatSend.disabled = b; 
+        $chatSend.textContent = b ? 'Enviando…' : '▶'; 
+      }
+
+      function scrollChatDown() { 
+        $chatMessages.scrollTop = $chatMessages.scrollHeight; 
+      }
+
+      function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c] || c));
+      }
+
+      function msgUser(text) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-bubble chat-bubble-user align-self-end';
+        wrap.textContent = text;
+        $chatMessages.appendChild(wrap);
+        scrollChatDown();
+      }
+
+      function msgAssistant(html) {
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-bubble chat-bubble-bot align-self-start';
+        wrap.innerHTML = html;
+        $chatMessages.appendChild(wrap);
+        scrollChatDown();
+      }
+
+      function chatPills(items, title) {
+        if (!items || !items.length) return null;
+        const box = document.createElement('div');
+        if (title) {
+          const h = document.createElement('div');
+          h.className = 'chat-muted';
+          h.textContent = title;
+          h.style.marginBottom = '6px';
+          box.appendChild(h);
+        }
+        items.forEach(s => {
+          const chip = document.createElement('div');
+          chip.className = 'chat-chip';
+          if (s.url_imagen) {
+            const img = document.createElement('img');
+            img.src = s.url_imagen;
+            img.alt = s.nombre_es;
+            chip.appendChild(img);
+          }
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = s.nombre_es;
+          chip.appendChild(name);
+          if (s.precio != null) {
+            const price = document.createElement('span');
+            price.className = 'price';
+            price.textContent = `$${Number(s.precio).toFixed(2)}`;
+            chip.appendChild(price);
+          }
+          chip.onclick = () => { $chatInput.value = s.nombre_es; submitChatQuery(); };
+          box.appendChild(chip);
+        });
+        return box;
+      }
+
+      function drinkCard(d, lang) {
+        console.log('Creating drink card for:', d.nombre_es, 'Image URL:', d.url_imagen);
+        const wrap = document.createElement('div');
+        wrap.className = 'chat-drink-card';
+        if (d.url_imagen) {
+          console.log('Adding image:', d.url_imagen);
+          const img = document.createElement('img');
+          img.src = d.url_imagen; 
+          img.alt = d.nombre_es; 
+          img.style.width = '72px';
+          img.style.height = '72px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '8px';
+          img.style.border = '1px solid #e6ece9';
+          img.onload = () => console.log('Image loaded successfully:', d.url_imagen);
+          img.onerror = () => console.log('Image failed to load:', d.url_imagen);
+          wrap.appendChild(img);
+        } else {
+          console.log('No image URL, using placeholder');
+          const ph = document.createElement('div');
+          ph.style.width = '72px'; ph.style.height = '72px'; ph.style.borderRadius = '8px'; ph.style.background = '#f1f6f4'; ph.style.border = '1px solid #e6ece9';
+          wrap.appendChild(ph);
+        }
+        const body = document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = d.nombre_es;
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const cal = (d.calorias != null) ? `${Number(d.calorias)}` : 'N/D';
+        const fat = (d.grasa_total != null) ? `${Number(d.grasa_total)}` : 'N/D';
+        const price = (d.precio != null) ? `$${Number(d.precio).toFixed(2)}` : 'N/D';
+        meta.textContent = `Tiempo: ${d.metodo} · Calorías: ${cal} kcal · Grasa: ${fat} g · Precio: ${price}`;
+        body.appendChild(title);
+        body.appendChild(meta);
+        
+        // Agregar descripción si existe
+        if (d.descripcion) {
+          const desc = document.createElement('div');
+          desc.className = 'meta';
+          desc.style.fontSize = '11px';
+          desc.style.marginTop = '4px';
+          desc.style.color = '#6b7a7a';
+          desc.textContent = d.descripcion;
+          body.appendChild(desc);
+        }
+        
+        // Agregar botón "Añadir al carrito"
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+        const addButton = document.createElement('button');
+        addButton.className = 'chat-btn-add-cart';
+        addButton.textContent = '🛒 Añadir al carrito';
+        addButton.onclick = () => agregarAlCarritoDesdeChat(d);
+        actions.appendChild(addButton);
+        body.appendChild(actions);
+        
+        wrap.appendChild(body);
+        return wrap;
+      }
+
+      async function submitChatQuery() {
+        const query = $chatInput.value.trim();
+        if (!query) return;
+        msgUser(query);
+        setChatBusy(true);
+        try {
+          const res = await fetch('/api/buscar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ consulta: query, idioma: "es" })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'request_failed');
+          msgAssistant(data.texto);
+          if (data.encontrado && data.datos) {
+            const card = drinkCard(data.datos, "es");
+            $chatMessages.appendChild(card);
+            scrollChatDown();
+          }
+          if (!data.encontrado && data.sugerencias && data.sugerencias.length) {
+            const box = chatPills(data.sugerencias, 'Quizá te interesen:');
+            if (box) $chatMessages.appendChild(box);
+            scrollChatDown();
+          }
+        } catch (e) {
+          msgAssistant('Ocurrió un error realizando la búsqueda.');
+        } finally {
+          setChatBusy(false);
+          $chatInput.value = '';
+        }
+      }
+
+      async function chatIntro() {
+        // Mensaje inicial de asistente
+        msgAssistant('¡Hola! ¿Qué te gustaría tomar hoy? Si quieres, puedo recomendarte algo.');
+        // Quick actions: Recomiéndame / Ver populares
+        const actions = document.createElement('div');
+        const a1 = document.createElement('span');
+        a1.className = 'chat-pill'; a1.textContent = 'Recomiéndame';
+        a1.onclick = chatRecommend;
+        const a2 = document.createElement('span');
+        a2.className = 'chat-pill'; a2.textContent = 'Ver populares';
+        a2.onclick = chatShowPopular;
+        actions.appendChild(a1); actions.appendChild(a2);
+        $chatMessages.appendChild(actions);
+        scrollChatDown();
+      }
+
+      async function chatRecommend() {
+        try {
+          const res = await fetch('/api/sugerencias?consulta=&limite=5');
+          const data = await res.json();
+          if (!data.ok || !data.elementos || !data.elementos.length) return;
+          const top = data.elementos[0];
+          msgAssistant(`Te recomiendo probar: <strong>${top.nombre_es}</strong>. ¿Quieres verlo?`);
+          const box = chatPills(data.elementos.slice(0, 6), 'Otras opciones:');
+          if (box) $chatMessages.appendChild(box);
+          scrollChatDown();
+        } catch (e) {}
+      }
+
+      async function chatShowPopular() {
+        try {
+          const res = await fetch('/api/sugerencias?consulta=&limite=10');
+          const data = await res.json();
+          if (!data.ok) return;
+          const box = chatPills(data.elementos, 'Populares:');
+          if (box) $chatMessages.appendChild(box);
+          scrollChatDown();
+        } catch (e) {}
+      }
+
+      function openChatWidget() {
+        $chatWidget.classList.add('open');
+        $chatLauncher.classList.add('hidden');
+        if (!window.__chatIntroShown) { 
+          chatIntro(); 
+          window.__chatIntroShown = true; 
+        }
+        $chatInput.focus();
+        chatOpen = true;
+      }
+      
+      function closeChatWidget() {
+        $chatWidget.classList.remove('open');
+        $chatLauncher.classList.remove('hidden');
+        chatOpen = false;
+      }
+
+      /**
+       * Agrega una bebida al carrito desde el chat
+       */
+      async function agregarAlCarritoDesdeChat(bebida) {
+        try {
+          // Cargar carrito actual desde localStorage
+          let carritoLocal = { items: [], total: 0 };
+          const carritoGuardado = localStorage.getItem('starbucks_carrito');
+          if (carritoGuardado) {
+            carritoLocal = JSON.parse(carritoGuardado);
+          }
+
+          // Buscar si ya existe en el carrito local
+          const itemExistente = carritoLocal.items.find(item => item.bebida.nombre_es === bebida.nombre_es);
+          
+          if (itemExistente) {
+            itemExistente.cantidad += 1;
+            itemExistente.subtotal = (bebida.precio || 0) * itemExistente.cantidad;
+          } else {
+            const nuevoItem = {
+              bebida: bebida,
+              cantidad: 1,
+              subtotal: bebida.precio || 0
+            };
+            carritoLocal.items.push(nuevoItem);
+          }
+          
+          // Recalcular total
+          carritoLocal.total = carritoLocal.items.reduce((sum, item) => sum + item.subtotal, 0);
+          
+          // Guardar en localStorage
+          localStorage.setItem('starbucks_carrito', JSON.stringify(carritoLocal));
+          
+          // Actualizar visualización del carrito
+          cargarCarrito();
+          
+          // Mostrar mensaje de confirmación
+          msgAssistant(`✅ ${bebida.nombre_es} agregado al carrito`);
+          
+        } catch (e) {
+          console.error('Error agregando al carrito:', e);
+          msgAssistant('❌ Error al agregar al carrito');
+        }
+      }
+
+      // ========== EVENT LISTENERS ==========
+      
+      // Chatbot integrado
+      $chatLauncher.addEventListener('click', openChatWidget);
+      $chatBtnClose.addEventListener('click', closeChatWidget);
+      $chatBtnMin.addEventListener('click', closeChatWidget);
+      $chatSend.addEventListener('click', submitChatQuery);
+      $chatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitChatQuery(); });
+      
+      // Carrito
+      $cartButton.addEventListener('click', abrirCarrito);
+      $cartClose.addEventListener('click', cerrarCarrito);
+      $cartOverlay.addEventListener('click', cerrarCarrito);
+      $btnCheckout.addEventListener('click', finalizarCompra);
+      
+      // Modal
+      $modalBtnPrimary.addEventListener('click', cerrarModal);
+      $modalBtnSecondary.addEventListener('click', () => {
+        cerrarModal();
+        // Si el botón secundario es "Ver Carrito" o "Seguir Comprando", abrir carrito
+        if ($modalBtnSecondary.textContent.includes('Carrito') || $modalBtnSecondary.textContent.includes('Comprando')) {
+          setTimeout(() => abrirCarrito(), 300);
+        }
       });
+      
+      // Cerrar modal al hacer clic en el overlay
+      $modal.addEventListener('click', (e) => {
+        if (e.target === $modal) {
+          cerrarModal();
+        }
+      });
+      
+      // Cerrar modal con tecla Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && $modal.classList.contains('show')) {
+          cerrarModal();
+        }
+      });
+      
+      // Ya no necesitamos escuchar mensajes del iframe porque el chat está integrado
+      
+      // Inicialización
+      cargarCarrito();
     </script>
   </body>
   </html>

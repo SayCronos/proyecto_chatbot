@@ -27,7 +27,4 @@ async def pagina_inicio(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
 
-@router.get("/chat")
-async def pagina_chat(request: Request):
-    """Página del chat del asistente de bebidas."""
-    return templates.TemplateResponse("index.html", {"request": request})
+# Ruta /chat eliminada - el chatbot ahora está integrado en home.html
