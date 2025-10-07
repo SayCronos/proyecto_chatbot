@@ -171,6 +171,422 @@
       .chat-drink-card .actions { margin-top: 8px; }
       .chat-btn-add-cart { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background 0.2s; }
       .chat-btn-add-cart:hover { background: #004d33; }
+      
+      /* ========== MODAL DE REGISTRO ========== */
+      .registro-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 3000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(6px); }
+      .registro-modal.show { display: flex; }
+      .registro-content { background: white; border-radius: 20px; padding: 0; max-width: 480px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.4); overflow: hidden; animation: registroSlideIn 0.4s ease-out; }
+      .registro-header { background: linear-gradient(135deg, var(--accent), #004d33); color: white; padding: 32px 24px; text-align: center; position: relative; }
+      .registro-header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="30" cy="30" r="3" fill="rgba(255,255,255,0.1)"/><circle cx="70" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="70" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2.5" fill="rgba(255,255,255,0.1)"/></svg>'); animation: sparkle 6s linear infinite; }
+      .registro-icon { font-size: 56px; margin-bottom: 16px; display: block; }
+      .registro-title { font-size: 28px; font-weight: 700; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+      .registro-subtitle { font-size: 16px; opacity: 0.9; margin-top: 8px; }
+      .registro-body { padding: 40px 32px; }
+      .registro-form { display: flex; flex-direction: column; gap: 24px; }
+      .registro-field { position: relative; }
+      .registro-label { display: block; font-weight: 600; color: var(--accent); margin-bottom: 8px; font-size: 14px; }
+      .registro-input { width: 100%; padding: 16px 20px; border: 2px solid #e6ece9; border-radius: 12px; font-size: 16px; transition: all 0.3s ease; background: #fafbfa; }
+      .registro-input:focus { outline: none; border-color: var(--accent); background: white; box-shadow: 0 0 0 4px rgba(0,98,65,0.1); }
+      .registro-input::placeholder { color: #9ca3af; }
+      .registro-footer { padding: 0 32px 32px; }
+      .registro-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 18px 24px; border-radius: 12px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+      .registro-btn:hover { background: #004d33; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,98,65,0.3); }
+      .registro-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+      .registro-info { text-align: center; margin-top: 16px; font-size: 13px; color: #6b7a7a; }
+      
+      @keyframes registroSlideIn {
+        from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      
+      /* ========== RESPONSIVE MÓVIL ========== */
+      @media (max-width: 768px) {
+        /* Ajustes para el chatbot en móvil */
+        .chat-widget {
+          bottom: 0;
+          right: 0;
+          left: 0;
+          width: 100%;
+          max-width: 100%;
+          height: 60vh;  /* Reducido de 75vh a 60vh */
+          border-radius: 16px 16px 0 0;
+          transform: translateY(100%);
+          opacity: 1;
+        }
+        .chat-widget.open {
+          transform: translateY(0);
+        }
+        .chat-launcher {
+          bottom: 110px;
+          right: 15px;
+          width: 48px;  /* Reducido de 50px a 48px */
+          height: 48px;
+          font-size: 16px;  /* Reducido de 18px a 16px */
+        }
+        .chat-area {
+          height: calc(60vh - 100px);  /* Ajustado para el nuevo tamaño */
+          max-height: calc(60vh - 100px);
+          padding: 8px 10px 0 10px;  /* Padding reducido */
+        }
+        .chat-widget-header {
+          padding: 12px 16px;  /* Reducido de 16px 20px */
+          min-height: 50px;    /* Reducido de 60px a 50px */
+        }
+        .chat-widget-title {
+          font-size: 14px;  /* Reducido de 16px a 14px */
+        }
+        
+        /* Ajustes para el carrito en móvil */
+        .cart-button {
+          bottom: 50px !important;
+          right: 15px !important;
+          width: 48px !important;  /* Reducido de 50px */
+          height: 48px !important;
+          font-size: 16px !important;  /* Reducido de 18px */
+        }
+        .cart-sidebar {
+          width: 85% !important;  /* Reducido de 100% a 85% */
+          max-width: 85% !important;
+          height: 70vh !important;  /* Altura máxima reducida */
+          max-height: 70vh !important;
+        }
+        .cart-header {
+          padding: 12px 16px !important;  /* Padding reducido */
+          min-height: 50px !important;
+        }
+        .cart-header h3 {
+          font-size: 16px !important;  /* Título más pequeño */
+          margin: 0 !important;
+        }
+        .cart-close {
+          width: 32px !important;  /* Botón cerrar más pequeño */
+          height: 32px !important;
+          font-size: 18px !important;
+        }
+        .cart-items {
+          padding: 8px 12px !important;  /* Padding reducido */
+          max-height: calc(70vh - 140px) !important;  /* Altura ajustada */
+        }
+        .cart-item {
+          padding: 8px !important;  /* Padding reducido */
+          margin-bottom: 8px !important;
+        }
+        .cart-item img {
+          width: 50px !important;  /* Imagen más pequeña */
+          height: 50px !important;
+        }
+        .cart-item-info h4 {
+          font-size: 14px !important;  /* Texto más pequeño */
+          margin-bottom: 2px !important;
+        }
+        .cart-item-info p {
+          font-size: 12px !important;
+        }
+        .cart-item-controls {
+          gap: 6px !important;  /* Espacio reducido entre controles */
+        }
+        .cart-item-controls button {
+          width: 28px !important;  /* Botones más pequeños */
+          height: 28px !important;
+          font-size: 14px !important;
+        }
+        .cart-item-quantity {
+          font-size: 14px !important;
+          min-width: 24px !important;
+        }
+        .cart-footer {
+          padding: 12px 16px !important;  /* Padding reducido */
+        }
+        .cart-total {
+          font-size: 16px !important;  /* Total más pequeño */
+          margin-bottom: 8px !important;
+        }
+        .cart-checkout {
+          padding: 10px 16px !important;  /* Botón más compacto */
+          font-size: 14px !important;
+        }
+        .cart-empty {
+          padding: 20px 16px !important;  /* Mensaje carrito vacío */
+          text-align: center !important;
+        }
+        .cart-empty p {
+          font-size: 14px !important;
+          margin-bottom: 8px !important;
+        }
+        .cart-badge {
+          font-size: 11px !important;  /* Badge más pequeño */
+          min-width: 18px !important;
+          height: 18px !important;
+          line-height: 18px !important;
+        }
+        .cart-overlay {
+          backdrop-filter: blur(3px) !important;  /* Menos blur para mejor performance */
+        }
+        /* Botón eliminar item más pequeño */
+        .cart-item .btn-remove {
+          width: 20px !important;
+          height: 20px !important;
+          font-size: 12px !important;
+          padding: 0 !important;
+        }
+        
+        /* Ajustes generales para móvil */
+        .container {
+          padding-left: 10px;
+          padding-right: 10px;
+        }
+        
+        /* Modal de registro responsive */
+        .registro-content {
+          width: 95%;
+          margin: 0 auto;
+        }
+        .registro-body {
+          padding: 20px 16px;
+        }
+        .registro-footer {
+          padding: 0 16px 20px;
+        }
+        
+        /* Hero section ajustes */
+        .hero h1 {
+          font-size: 2rem !important;
+        }
+        .hero p {
+          font-size: 1rem !important;
+        }
+        
+        /* Navbar responsive - Oculto en móvil */
+        .navbar {
+          display: none !important;  /* Ocultar navbar completamente en móvil */
+        }
+        
+        /* Ajustar body para compensar la falta de navbar */
+        body {
+          padding-top: 0 !important;  /* Remover padding superior */
+        }
+        
+        /* Hero section ajustado sin navbar */
+        .hero {
+          margin-top: 0 !important;
+          padding-top: 60px !important;  /* Padding superior para compensar */
+        }
+        
+        /* Logo flotante minimalista para móvil */
+        .mobile-brand {
+          display: block !important;
+          position: fixed;
+          top: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 1100;
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(10px);
+          padding: 8px 16px;
+          border-radius: 20px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .mobile-brand .brand-content {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .mobile-brand img {
+          width: 24px;
+          height: 24px;
+        }
+        .mobile-brand span {
+          font-size: 14px;
+          font-weight: 700;
+          color: #1e3932;
+        }
+        
+        /* Botones más grandes para touch */
+        .chat-icon-btn {
+          width: 36px !important;
+          height: 36px !important;
+          font-size: 16px !important;
+          margin: 0 4px;
+          min-height: 44px; /* Área táctil recomendada */
+          min-width: 44px;
+        }
+        
+        /* Espaciado mejorado para móvil */
+        .chat-composer {
+          padding: 10px 12px;  /* Reducido de 16px */
+        }
+        .chat-composer input {
+          font-size: 16px; /* Evita zoom en iOS */
+          padding: 8px 12px; /* Padding más compacto */
+          height: 36px; /* Altura fija más pequeña */
+        }
+        .chat-composer button {
+          padding: 8px 12px; /* Botón más compacto */
+          min-height: 36px;
+        }
+        
+        /* Burbujas de chat más compactas */
+        .chat-bubble {
+          padding: 8px 10px;  /* Reducido de 10px 12px */
+          margin: 4px 0;      /* Menos espacio entre mensajes */
+          font-size: 14px;    /* Texto más pequeño */
+          line-height: 1.3;   /* Interlineado más compacto */
+        }
+        
+        /* Pills más pequeños */
+        .chat-pill {
+          padding: 4px 8px;   /* Reducido de 6px 10px */
+          font-size: 11px;    /* Texto más pequeño */
+          margin: 3px 3px 0 0; /* Menos espacio */
+        }
+        
+        /* Tarjetas de bebida más compactas */
+        .chat-drink-card {
+          padding: 8px;       /* Reducido de 10px */
+          gap: 8px;           /* Reducido de 12px */
+        }
+        .chat-drink-card img {
+          width: 60px;        /* Reducido de 72px */
+          height: 60px;
+        }
+        .chat-drink-card .title {
+          font-size: 14px;    /* Más pequeño */
+          margin-bottom: 1px;
+        }
+        .chat-drink-card .meta {
+          font-size: 11px;    /* Más pequeño */
+        }
+        .chat-btn-add-cart {
+          padding: 4px 8px;   /* Más compacto */
+          font-size: 11px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        /* Ajustes para pantallas muy pequeñas */
+        .chat-widget {
+          height: 55vh;  /* Aún más pequeño en pantallas pequeñas */
+        }
+        .chat-area {
+          height: calc(55vh - 90px);  /* Ajustado para el nuevo tamaño */
+          max-height: calc(55vh - 90px);
+          padding: 6px 8px 0 8px;  /* Padding aún más reducido */
+        }
+        .chat-launcher {
+          bottom: 100px;
+          right: 10px;
+          width: 44px;  /* Más pequeño */
+          height: 44px;
+          font-size: 14px;
+        }
+        .cart-button {
+          bottom: 40px !important;
+          right: 10px !important;
+          width: 44px !important;  /* Más pequeño */
+          height: 44px !important;
+          font-size: 16px !important;
+        }
+        .cart-sidebar {
+          width: 90% !important;  /* Más ancho en pantallas muy pequeñas */
+          height: 65vh !important;  /* Altura reducida */
+          max-height: 65vh !important;
+        }
+        .cart-header {
+          padding: 10px 12px !important;
+          min-height: 44px !important;
+        }
+        .cart-header h3 {
+          font-size: 14px !important;
+        }
+        .cart-close {
+          width: 28px !important;
+          height: 28px !important;
+          font-size: 16px !important;
+        }
+        .cart-items {
+          padding: 6px 10px !important;
+          max-height: calc(65vh - 120px) !important;
+        }
+        .cart-item {
+          padding: 6px !important;
+          margin-bottom: 6px !important;
+        }
+        .cart-item img {
+          width: 45px !important;
+          height: 45px !important;
+        }
+        .cart-item-info h4 {
+          font-size: 13px !important;
+        }
+        .cart-item-info p {
+          font-size: 11px !important;
+        }
+        .cart-item-controls button {
+          width: 26px !important;
+          height: 26px !important;
+          font-size: 12px !important;
+        }
+        .cart-item-quantity {
+          font-size: 13px !important;
+          min-width: 22px !important;
+        }
+        .cart-footer {
+          padding: 10px 12px !important;
+        }
+        .cart-total {
+          font-size: 15px !important;
+        }
+        .cart-checkout {
+          padding: 8px 12px !important;
+          font-size: 13px !important;
+        }
+        .chat-widget-header {
+          padding: 10px 12px;  /* Header más compacto */
+          min-height: 44px;
+        }
+        .chat-composer {
+          padding: 8px 10px;  /* Composer más compacto */
+        }
+        .chat-bubble {
+          font-size: 13px;  /* Texto aún más pequeño */
+          padding: 6px 8px;
+        }
+        
+        /* Logo móvil más pequeño en pantallas muy pequeñas */
+        .mobile-brand {
+          top: 8px !important;
+          padding: 6px 12px !important;
+        }
+        .mobile-brand img {
+          width: 20px !important;
+          height: 20px !important;
+        }
+        .mobile-brand span {
+          font-size: 12px !important;
+        }
+      }
+      
+      /* Estilos específicos para dispositivos móviles detectados por JS */
+      .mobile-device .chat-icon-btn {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+      }
+      
+      .mobile-device .chat-launcher,
+      .mobile-device .cart-button {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+      }
+      
+      /* Mejoras de accesibilidad táctil */
+      .mobile-device button,
+      .mobile-device .chat-pill,
+      .mobile-device .btn-add-cart {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+      }
     </style>
   </head>
   <body>
@@ -188,6 +604,14 @@
         </ul>
       </div>
     </nav>
+
+    <!-- Logo flotante para móvil (solo visible en dispositivos móviles) -->
+    <div class="mobile-brand" style="display: none;">
+      <div class="brand-content">
+        <img src="https://cdn-icons-png.flaticon.com/128/5977/5977591.png" alt="Starbucks" />
+        <span>Starbucks</span>
+      </div>
+    </div>
 
     <!-- Hero -->
     <div class="container my-4">
@@ -316,6 +740,42 @@
       </div>
     </div>
 
+    <!-- Modal de registro de usuario -->
+    <div id="registro-modal" class="registro-modal">
+      <div class="registro-content">
+        <div class="registro-header">
+          <span class="registro-icon">👋</span>
+          <h2 class="registro-title">¡Bienvenido a Starbucks!</h2>
+          <p class="registro-subtitle">Para brindarte la mejor experiencia, necesitamos algunos datos</p>
+        </div>
+        <div class="registro-body">
+          <form id="registro-form" class="registro-form">
+            <div class="registro-field">
+              <label for="registro-nombre" class="registro-label">Nombre completo</label>
+              <input type="text" id="registro-nombre" name="nombre" class="registro-input" 
+                     placeholder="Ej: Juan Pérez" required>
+            </div>
+            <div class="registro-field">
+              <label for="registro-direccion" class="registro-label">Dirección de entrega</label>
+              <input type="text" id="registro-direccion" name="direccion" class="registro-input" 
+                     placeholder="Ej: Calle 123 #45-67, Bogotá" required>
+            </div>
+            <div class="registro-field">
+              <label for="registro-celular" class="registro-label">Número de celular</label>
+              <input type="tel" id="registro-celular" name="celular" class="registro-input" 
+                     placeholder="Ej: +57 300 123 4567" required>
+            </div>
+          </form>
+        </div>
+        <div class="registro-footer">
+          <button id="registro-btn" class="registro-btn" onclick="procesarRegistro()">Comenzar a ordenar ☕</button>
+          <p class="registro-info">
+            🔒 Tus datos están seguros y solo se usan para procesar tu pedido
+          </p>
+        </div>
+      </div>
+    </div>
+
     <script>
       // Variables del chatbot integrado
       const $chatLauncher = document.getElementById('chat-launcher');
@@ -348,6 +808,14 @@
       const $modalDetailsText = document.getElementById('modal-details-text');
       const $modalBtnPrimary = document.getElementById('modal-btn-primary');
       const $modalBtnSecondary = document.getElementById('modal-btn-secondary');
+
+      // Variables del modal de registro
+      const $registroModal = document.getElementById('registro-modal');
+      const $registroForm = document.getElementById('registro-form');
+      const $registroBtn = document.getElementById('registro-btn');
+      const $registroNombre = document.getElementById('registro-nombre');
+      const $registroDireccion = document.getElementById('registro-direccion');
+      const $registroCelular = document.getElementById('registro-celular');
 
       // Estado del carrito (se sincroniza con localStorage)
       let carritoLocal = {
@@ -627,6 +1095,227 @@
         });
       }
 
+      // ========== FUNCIONES DEL REGISTRO ==========
+
+      // Estado del usuario registrado
+      let usuarioRegistrado = null;
+
+      /**
+       * Verifica si el usuario ya está registrado
+       */
+      function verificarRegistro() {
+        const datosGuardados = localStorage.getItem('starbucks_usuario');
+        if (datosGuardados) {
+          usuarioRegistrado = JSON.parse(datosGuardados);
+          return true;
+        }
+        return false;
+      }
+
+      /**
+       * Muestra el modal de registro
+       */
+      function mostrarRegistro() {
+        $registroModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        $registroNombre.focus();
+      }
+
+      /**
+       * Oculta el modal de registro
+       */
+      function ocultarRegistro() {
+        $registroModal.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      /**
+       * Valida los datos del formulario
+       */
+      function validarFormularioRegistro() {
+        const nombre = $registroNombre.value.trim();
+        const direccion = $registroDireccion.value.trim();
+        const celular = $registroCelular.value.trim();
+
+        console.log('Validando:', { nombre, direccion, celular });
+
+        if (!nombre || nombre.length < 2) {
+          alert('Por favor ingresa un nombre válido (mínimo 2 caracteres)');
+          $registroNombre.focus();
+          return false;
+        }
+
+        if (!direccion || direccion.length < 5) {
+          alert('Por favor ingresa una dirección válida (mínimo 5 caracteres)');
+          $registroDireccion.focus();
+          return false;
+        }
+
+        if (!celular || celular.length < 7) {
+          alert('Por favor ingresa un número de celular válido (mínimo 7 dígitos)');
+          $registroCelular.focus();
+          return false;
+        }
+
+        return { nombre, direccion, celular };
+      }
+
+      /**
+       * Procesa el registro del usuario
+       */
+      function procesarRegistro() {
+        console.log('=== INICIANDO PROCESO DE REGISTRO ===');
+        
+        // Obtener valores directamente
+        const nombre = document.getElementById('registro-nombre').value.trim();
+        const direccion = document.getElementById('registro-direccion').value.trim();
+        const celular = document.getElementById('registro-celular').value.trim();
+        
+        console.log('Valores obtenidos:', { nombre, direccion, celular });
+        
+        // Validación simple
+        if (!nombre || nombre.length < 2) {
+          alert('Por favor ingresa un nombre válido');
+          return;
+        }
+        
+        if (!direccion || direccion.length < 5) {
+          alert('Por favor ingresa una dirección válida');
+          return;
+        }
+        
+        if (!celular || celular.length < 7) {
+          alert('Por favor ingresa un celular válido');
+          return;
+        }
+
+        // Guardar datos localmente
+        usuarioRegistrado = {
+          nombre,
+          direccion,
+          celular,
+          fechaRegistro: new Date().toISOString(),
+          id: Date.now().toString()
+        };
+
+        localStorage.setItem('starbucks_usuario', JSON.stringify(usuarioRegistrado));
+        console.log('Datos guardados localmente:', usuarioRegistrado);
+
+        // Enviar datos a la base de datos
+        enviarRegistroABaseDatos(usuarioRegistrado);
+
+        // Cerrar modal
+        document.getElementById('registro-modal').classList.remove('show');
+        document.body.style.overflow = '';
+        console.log('Modal cerrado');
+
+        // Abrir chatbot
+        setTimeout(() => {
+          console.log('Abriendo chatbot...');
+          document.getElementById('chat-widget').classList.add('open');
+          document.getElementById('chat-launcher').classList.add('hidden');
+          
+          if (!window.__chatIntroShown) { 
+            chatIntro(); 
+            window.__chatIntroShown = true; 
+          }
+          
+          document.getElementById('chat-input').focus();
+          chatOpen = true;
+          console.log('Chatbot abierto!');
+        }, 300);
+      }
+
+      /**
+       * Permite editar los datos del usuario
+       */
+      function editarDatosUsuario() {
+        if (usuarioRegistrado) {
+          $registroNombre.value = usuarioRegistrado.nombre;
+          $registroDireccion.value = usuarioRegistrado.direccion;
+          $registroCelular.value = usuarioRegistrado.celular;
+          mostrarRegistro();
+        }
+      }
+
+      /**
+       * Envía los datos de registro a la base de datos
+       */
+      async function enviarRegistroABaseDatos(datosUsuario) {
+        try {
+          console.log('Enviando datos a la base de datos...');
+          
+          const response = await fetch('/api/pedidos/registrar-usuario', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              nombre: datosUsuario.nombre,
+              direccion: datosUsuario.direccion,
+              celular: datosUsuario.celular
+            })
+          });
+
+          if (response.ok) {
+            const resultado = await response.json();
+            console.log('✅ Usuario registrado en base de datos:', resultado);
+            
+            // Guardar el ID del pedido para futuras referencias
+            usuarioRegistrado.id_pedido = resultado.id_pedido;
+            localStorage.setItem('starbucks_usuario', JSON.stringify(usuarioRegistrado));
+            
+          } else {
+            const error = await response.json();
+            console.error('❌ Error registrando en base de datos:', error);
+            // No bloqueamos el flujo, solo mostramos el error
+          }
+          
+        } catch (error) {
+          console.error('❌ Error de conexión con base de datos:', error);
+          // No bloqueamos el flujo, el usuario puede seguir usando la app
+        }
+      }
+
+      /**
+       * Envía un pedido completo a la base de datos
+       */
+      async function enviarPedidoABaseDatos(bebida) {
+        if (!usuarioRegistrado) {
+          console.error('No hay usuario registrado');
+          return;
+        }
+
+        try {
+          console.log('Enviando pedido a la base de datos...');
+          
+          const response = await fetch('/api/pedidos/crear-pedido', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              nombre_usuario: usuarioRegistrado.nombre,
+              direccion: usuarioRegistrado.direccion,
+              telefono: usuarioRegistrado.celular,
+              nombre_bebida: bebida.nombre_es,
+              precio: bebida.precio || 0
+            })
+          });
+
+          if (response.ok) {
+            const resultado = await response.json();
+            console.log('✅ Pedido registrado en base de datos:', resultado);
+          } else {
+            const error = await response.json();
+            console.error('❌ Error registrando pedido:', error);
+          }
+          
+        } catch (error) {
+          console.error('❌ Error de conexión:', error);
+        }
+      }
+
       // ========== FUNCIONES DEL CHATBOT ==========
 
       function setChatBusy(b) { 
@@ -787,8 +1476,15 @@
       }
 
       async function chatIntro() {
-        // Mensaje inicial de asistente
-        msgAssistant('¡Hola! ¿Qué te gustaría tomar hoy? Si quieres, puedo recomendarte algo.');
+        // Mensaje inicial personalizado con el nombre del usuario
+        const nombreUsuario = usuarioRegistrado ? usuarioRegistrado.nombre.split(' ')[0] : 'amigo';
+        msgAssistant(`¡Hola ${nombreUsuario}! ¿Qué te gustaría tomar hoy? Si quieres, puedo recomendarte algo.`);
+        
+        // Mostrar información de entrega si está disponible
+        if (usuarioRegistrado && usuarioRegistrado.direccion) {
+          msgAssistant(`📍 Entregaremos en: ${usuarioRegistrado.direccion}`);
+        }
+        
         // Quick actions: Recomiéndame / Ver populares
         const actions = document.createElement('div');
         const a1 = document.createElement('span');
@@ -827,6 +1523,12 @@
       }
 
       function openChatWidget() {
+        // Verificar si el usuario está registrado
+        if (!verificarRegistro()) {
+          mostrarRegistro();
+          return;
+        }
+
         $chatWidget.classList.add('open');
         $chatLauncher.classList.add('hidden');
         if (!window.__chatIntroShown) { 
@@ -879,6 +1581,9 @@
           // Actualizar visualización del carrito
           cargarCarrito();
           
+          // Enviar pedido a la base de datos
+          enviarPedidoABaseDatos(bebida);
+          
           // Mostrar mensaje de confirmación
           msgAssistant(`✅ ${bebida.nombre_es} agregado al carrito`);
           
@@ -904,12 +1609,70 @@
       $btnCheckout.addEventListener('click', finalizarCompra);
       
       // Modal
-      $modalBtnPrimary.addEventListener('click', cerrarModal);
+      $modalBtnPrimary.addEventListener('click', () => {
+        cerrarModal();
+        // Si el botón primario es "Comenzar a ordenar", abrir chatbot
+        if ($modalBtnPrimary.textContent.includes('Comenzar a ordenar')) {
+          setTimeout(() => {
+            $chatWidget.classList.add('open');
+            $chatLauncher.classList.add('hidden');
+            if (!window.__chatIntroShown) { 
+              chatIntro(); 
+              window.__chatIntroShown = true; 
+            }
+            $chatInput.focus();
+            chatOpen = true;
+          }, 300);
+        }
+      });
+      
       $modalBtnSecondary.addEventListener('click', () => {
         cerrarModal();
         // Si el botón secundario es "Ver Carrito" o "Seguir Comprando", abrir carrito
         if ($modalBtnSecondary.textContent.includes('Carrito') || $modalBtnSecondary.textContent.includes('Comprando')) {
           setTimeout(() => abrirCarrito(), 300);
+        }
+        // Si el botón secundario es "Editar datos", mostrar registro
+        if ($modalBtnSecondary.textContent.includes('Editar datos')) {
+          setTimeout(() => editarDatosUsuario(), 300);
+        }
+      });
+      
+      // Modal de registro
+      $registroBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('Botón de registro clickeado');
+        procesarRegistro();
+      });
+      
+      $registroForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        console.log('Formulario enviado');
+        procesarRegistro();
+      });
+      
+      // Validación en tiempo real
+      $registroNombre.addEventListener('input', () => {
+        if ($registroNombre.value.trim().length >= 2) {
+          $registroNombre.style.borderColor = '#10b981';
+        } else {
+          $registroNombre.style.borderColor = '#e6ece9';
+        }
+      });
+      
+      $registroDireccion.addEventListener('input', () => {
+        if ($registroDireccion.value.trim().length >= 10) {
+          $registroDireccion.style.borderColor = '#10b981';
+        } else {
+          $registroDireccion.style.borderColor = '#e6ece9';
+        }
+      });
+      
+      $registroCelular.addEventListener('input', () => {
+        if ($registroCelular.value.trim().length >= 10) {
+          $registroCelular.style.borderColor = '#10b981';
+        } else {
+          $registroCelular.style.borderColor = '#e6ece9';
         }
       });
       
@@ -931,6 +1694,54 @@
       
       // Inicialización
       cargarCarrito();
+      verificarRegistro(); // Cargar datos del usuario si existen
+      
+      // Debug: Verificar que los elementos existen
+      console.log('Elementos del registro:', {
+        modal: $registroModal,
+        btn: $registroBtn,
+        form: $registroForm,
+        nombre: $registroNombre,
+        direccion: $registroDireccion,
+        celular: $registroCelular
+      });
+      
+      // Mejoras para dispositivos móviles
+      function mejorarExperienciaMovil() {
+        // Detectar si es dispositivo móvil
+        const esMobile = window.innerWidth <= 768;
+        
+        if (esMobile) {
+          // Agregar clase para móvil
+          document.body.classList.add('mobile-device');
+          
+          // Mejorar área táctil de botones pequeños
+          const botonesChat = document.querySelectorAll('.chat-icon-btn');
+          botonesChat.forEach(btn => {
+            btn.style.padding = '8px';
+            btn.style.margin = '4px';
+          });
+          
+          // Prevenir zoom en inputs en iOS
+          const inputs = document.querySelectorAll('input, textarea');
+          inputs.forEach(input => {
+            if (input.style.fontSize === '' || parseInt(input.style.fontSize) < 16) {
+              input.style.fontSize = '16px';
+            }
+          });
+        }
+      }
+      
+      // Ejecutar mejoras móviles
+      mejorarExperienciaMovil();
+      
+      // Re-ejecutar en cambio de orientación
+      window.addEventListener('orientationchange', () => {
+        setTimeout(mejorarExperienciaMovil, 100);
+      });
+      
+      // Re-ejecutar en resize
+      window.addEventListener('resize', mejorarExperienciaMovil);
     </script>
   </body>
   </html>

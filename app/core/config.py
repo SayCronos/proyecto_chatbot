@@ -23,7 +23,7 @@ class Configuracion(BaseSettings):
     estrategia_sugerencia_default: str = "hibrida"
     
     # Configuración del servidor
-    host: str = "127.0.0.1"  # Cambiar a "0.0.0.0" para acceso de red local
+    host: str = "127.0.0.1" 
     puerto: int = 8000  # Puerto estándar para desarrollo web
     
     class Config:
